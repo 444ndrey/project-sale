@@ -1,0 +1,38 @@
+
+:root{
+    --gray-main: #969696;
+    --gray-secound: #474964;
+    --red: #d84242;
+}
+*{
+    box-sizing: border-box;
+}
+.container{
+    width: 1500px;
+    margin: 0 auto;
+}
+body{
+    height: 1vh;
+    height: 100%;
+    background-color: #e8e8e8;
+}
+
+
+@media screen and (max-width: 1600px){
+
+    .container{
+        width: 1100px;
+    }
+}
+@media screen and (max-width: 1100px){
+
+    .container{
+        width: 700px;
+    }
+}
+@media screen and (max-width: 750px){
+
+    .container{
+        width: 400px;
+    }
+}

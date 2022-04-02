@@ -1,15 +1,10 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import Sale from '../views/Sale.vue';
 import Store from '../views/Store.vue';
 import Balance from '../views/Balance.vue';
 import Agents from '../views/Agents.vue';
 import Stat from '../views/Stat.vue';
+import NewAgent from '../views/NewAgent.vue';
 const routes = [
-  {
-    path: '/sale',
-    name: 'Sale',
-    component: Sale
-  },
   {
     path: '/store',
     name: 'Store',
@@ -29,6 +24,11 @@ const routes = [
     path: '/stat',
     name: 'Stat',
     component: Stat
+  },
+  {
+    path: '/newagent',
+    name: 'NewAgent',
+    component: NewAgent
   }
 ]
 

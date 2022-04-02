@@ -77,8 +77,6 @@ export default {
 </script>
 
 <style>
-.wrapper{
-}
 .grid {
   display: grid;
   grid-template-columns: 1fr 3fr;
@@ -90,7 +88,7 @@ export default {
 }
 .grid__item {
   background-color: #fff;
-  border-radius: 20px;
+  border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
   padding: 20px;
 }

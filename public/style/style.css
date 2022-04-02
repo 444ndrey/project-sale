@@ -33,26 +33,90 @@ router-link {
     border-radius: 20px;
     border: none;
     color: white;
-    padding: 10px;
+    padding: 10px 15px;
     transition: 0.4s ease-in-out;
 }
 .btn1:hover {
     background-color: var(--red-light);
     box-shadow: 1px 1px 29px 2px rgba(247, 92, 92, 0.3);
 }
+.btn2{
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    color: var(--gray-secound);
+    font-weight: bold;
+    transition: .3s ease-in-out;
+}
+.btn2:hover{
+    color: var(--red-light);
+}
+.btn3{
+    cursor: pointer;
+    background-color: transparent;
+    color: var(--gray-secound);
+    border: 2px solid var(--gray-secound);
+    border-radius: 20px;
+    padding: 5px 15px;
+    letter-spacing: 2px;
+    transition: .2s ease-in-out;
+}
+.btn3:hover{
+    background-color: var(--gray-secound);
+    color: #fff;
+}
 
+.title1{
+    margin: 0;
+    margin-bottom: 20px;
+}
 .control-search1 {
     outline: none;
     width: 300px;
     border: none;
-    border-bottom: 1px solid var(--gray-main);
+    border-bottom: 1px solid var(--gray-secound);
     padding: 5px;
     color: var(--gray-main);
     transition: 0.4s ease-in-out;
 }
 .control-search1:focus{
-    border-color: var(--gray-secound);
+    border-color: var(--gray-main);
 }
+.control-win {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    padding: 50px;
+    height: 100%;
+    overflow: hidden;
+    overflow-y: auto;
+  }
+.control-input{
+    outline-style: none;
+    border: none;
+    border-bottom: 2px solid #d4d4d4;
+    padding: 5px;
+    width: 100%;
+    transition: .3s ease-in-out;
+    letter-spacing: 2px;
+    color: var(--gray-secound);
+}
+.control-input:focus{
+    border-color: var(--red-light);
+    box-shadow: -1px 6px 15px 0px rgba(247, 92, 92, 0.2);
+}
+.backpage{
+    margin-left: 10px;
+    background-color: transparent;
+    border: none;
+    color: var(--gray-main);
+    cursor: pointer;
+}
+.backpage:hover{
+    color: var(--gray-secound);
+    font-weight: bold;
+}
+
 
 @media screen and (max-width: 1600px) {
     .container {

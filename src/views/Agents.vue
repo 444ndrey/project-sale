@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="win container">
-      <div class="win__control">
+    <div class="control-win container">
+      <div class="win__panel">
         <input
           class="control-search1"
           type="text"
@@ -9,7 +9,7 @@
           placeholder="Поиск название, ИНН"
           v-model="searchValue"
         />
-        <button class="btn1">Добавить контрагента</button>
+        <button class="btn1" @click="$router.push('NewAgent')">Добавить контрагента</button>
       </div>
       <table class="table">
         <th class="table__header">Имя</th>
@@ -86,27 +86,13 @@ export default {
 </script>
 
 <style scoped>
-.win {
-  background: #fff;
-  border-radius: 20px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-  padding: 50px;
-  height: 100%;
-}
-.win__control {
+
+.win__panel {
   display: flex;
   justify-content: left;
   gap: 50px;
   align-items: center;
   margin-bottom: 40px;
-}
-.win__control-search {
-  outline: none;
-  width: 300px;
-  border: none;
-  border-bottom: 1px solid var(--gray-main);
-  padding: 5px;
-  color: var(--gray-main);
 }
 .table {
   width: 100%;

@@ -130,7 +130,7 @@ export default {
   overflow-y: auto;
   height: 100%;
   padding-top: 85px;
-  padding-bottom: 20px;
+  padding-bottom: 30px;
 }
 .win {
   height: 100%;

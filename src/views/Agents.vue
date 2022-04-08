@@ -24,9 +24,8 @@
           <td class="table__value">{{ item.address }}</td>
           <td class="table__value">{{ item.phone }}</td>
           <td class="table__value">
-            <router-link to="/agents" class="table__value-link"
-              >открыть</router-link
-            >
+            <a @click="$router.push({name: 'EdtAgent', query:{id:item.id}})" class="table__value-link"
+              >открыть</a>
           </td>
           <td class="table__value">
             <button class="table__value-del">&#10006;</button>
@@ -113,6 +112,10 @@ export default {
   padding: 10px 10px;
   word-break: break-all;
 }
+.table__value::selection{
+  background-color: var(--red-light);
+    color: white;
+}
 .table__row {
   border-radius: 10px;
   padding: 20px 0;
@@ -126,6 +129,7 @@ export default {
   font-size: 16px;
   transition: 0.2s ease-in-out;
   user-select: none;
+  cursor: pointer;
 }
 .table__value-link:hover {
   color: var(--gray-secound);

@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
       <div class="grid container">
-        <div class="grid__item grid__item-header"></div>
+        <!-- <div class="grid__item grid__item-header"></div> -->
         <div class="grid__item"></div>
         <div class="grid__item">
           <div class="list__panel">
@@ -12,9 +12,9 @@
               maxlength="20"
               placeholder="Поиск название, артикул, цена"
             />
-            <button class="btn1">Добавить товар</button>
+            <button class="btn1" @click="$router.push({name:'NewProduct'})">Добавить товар</button>
           </div>
-          <h2 class="list__title">
+          <h2 class="title1">
             {{ searchProduct.length > 0 ? "Товар в наличии" : "Нет товара..." }}
           </h2>
           <div class="list__items">
@@ -22,6 +22,7 @@
               v-for="item in searchProduct"
               :product="item"
               :key="item.id"
+              @dblclick="$router.push({name: 'ProdctInfo', query:{id:item.id}})"
             ></ProductCard>
           </div>
         </div>
@@ -38,7 +39,7 @@ export default {
       {
         id: 0,
         name: "Сахар",
-        article: "001956",
+        code: "001956",
         price: 90,
         unit: "шт",
         items: [
@@ -49,7 +50,7 @@ export default {
       {
         id: 1,
         name: "Гвозди 50 шт пачка",
-        article: "001253",
+        code: "001253",
         price: 177,
         unit: "шт",
         items: [{ id: 0, price: 3, amount: 203 }],
@@ -76,11 +77,14 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.wrapper{
+  height: 100%;
+}
 .grid {
   display: grid;
   grid-template-columns: 1fr 3fr;
-  grid-template-rows: 1fr 5fr;
+  grid-template-rows: auto;
   overflow: visible;
   height: 100%;
   grid-column-gap: 10px;
@@ -105,7 +109,7 @@ export default {
 }
 .list__items {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: 5px;
   padding-bottom: 10px;
   overflow-y: visible;

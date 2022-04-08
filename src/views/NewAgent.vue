@@ -2,7 +2,11 @@
   <div>
     <div class="control-win container">
       <h2 class="title1">Новый контрагент</h2>
-      <ErrorMessage></ErrorMessage>
+      <div class="message-error" v-if="error.isActive">
+            <ul>
+              <li v-for="item in error.messages" :key="item.value">{{item.value}}</li>
+            </ul>
+      </div>
       <div class="field__items">
         <div class="field__item field__item-necessary">
           <input type="text" class="control-input" v-model="agent.name" maxlength="25" placeholder="Название"
@@ -36,28 +40,47 @@
 <script>
 import {computed, ref} from 'vue'
 import AdditionalParams from '../components/AdditionalParams.vue';
-import ErrorMessage from '../components/uiControls/ErrorMessage.vue';
 export default {
     setup() {
         const agent = ref({
             id: 0,
-            name: "",
-            inn: "",
+            name: '',
+            inn: '',
             kpp: '',
-            address: "",
-            phone: "",
+            address: '',
+            phone: '',
             params: [
                 { id: 0, name: "vk", value: "vk.com/tnv44" },
             ]
         });
-
+        let error = ref({
+          messages: [],
+          isActive: false
+        })
         function addAgent(){
-
-            
+            error.value.messages = [];
+            error.value.isActive = false;
+            let requiers = ['name','inn','kpp','address'];
+            let count = 0;
+            for(let i = 0; i < requiers.length; i++){
+              if(agent.value[`${requiers[i]}`].length <= 0){
+                count++;
+              }
+            }
+            if(count != 0) {error.value.messages.push({value: 'Не все обязательные поля были заполнены'});}
+            if(agent.value.inn.length < 12 && agent.value.inn.length != 0){
+              error.value.messages.push({value: 'ИНН указан некорректно'});
+            }
+            if(agent.value.kpp.length < 9 && agent.value.kpp.length != 0 ){
+              error.value.messages.push({value: 'КПП указан некорректно'});
+            }
+            if(error.value.messages.length != 0){
+               error.value.isActive = true;
+            }
         }
-        return {agent,addAgent};
+        return {agent,addAgent, error};
     },
-    components: { AdditionalParams, ErrorMessage }
+    components: { AdditionalParams}
 };
 </script>
 
@@ -66,7 +89,6 @@ export default {
   max-width: 1000px;
   padding: 30px;
   color: var(--gray-secound);
-  position: relative;
   height: max-content;
 }
 .field__items {
@@ -82,11 +104,6 @@ export default {
   width: 340px;
   display: flex;
 }
-.field__item-necessary::after {
-  content: "*";
-  color: #f79114;
-  display: inline;
-}
 .buttons {
   bottom: 0;
   display: flex;
@@ -94,5 +111,10 @@ export default {
   align-self: flex-end;
   gap: 15px;
   margin-top: 30px;
+}
+.field__item-necessary::after {
+  content: "*";
+  color: #f79114;
+  display: inline;
 }
 </style>

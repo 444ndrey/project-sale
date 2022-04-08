@@ -1,25 +1,27 @@
 <template>
   <div class="card">
-    <div class="card__left">
-      <div class="card__name">{{ product.name }}</div>
-      <div class="card__article">Арт.{{product.article}}</div>
-      <div class="card__amount">{{amount}} {{product.unit}}.</div>
+    <div>
+      <div class="card__name">{{ product.name.length < 20 ? product.name : product.name.slice(0,19)+'...'}}</div>
+      <div class="card__article">Арт.{{ product.code }}</div>
+      <div class="card__amount">{{ amount }} {{ product.unit }}.</div>
     </div>
-    <div class="card__price">{{product.price}}&#8381;</div>
+    <div class="card__price">{{ product.price }}&#8381;</div>
   </div>
 </template>
 
 <script>
-import { computed } from '@vue/runtime-core';
+import { computed } from "@vue/runtime-core";
 export default {
   props: ["product"],
   setup(props) {
-      const amount = computed(() => {
-        return props.product.items.map((item) => {
-              return item.amount;
-          }).reduce((sum, a) => sum + a)
-      })
-      return {amount}
+    const amount = computed(() => {
+      return props.product.items
+        .map((item) => {
+          return item.amount;
+        })
+        .reduce((sum, a) => sum + a);
+    });
+    return { amount };
   },
 };
 </script>
@@ -28,8 +30,9 @@ export default {
 .card {
   border: 0 1px solid var(-gray-main);
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  align-items: center;
+  width: 150px;
   padding: 10px;
   gap: 10px;
   color: var(--gray-secound);
@@ -39,8 +42,8 @@ export default {
   user-select: none;
   transition: background-color 0.1s ease-in-out;
 }
-.card:hover{
-    background-color: #eeee;
+.card:hover {
+  background-color: #eeee;
 }
 .card__name {
   font-weight: bold;
@@ -55,6 +58,7 @@ export default {
 .card__price {
   font-size: 24px;
   font-weight: bold;
+  justify-self: flex-end;
 }
 .card__bottom {
   display: flex;

@@ -37,7 +37,7 @@
       </div>
     </div>
     <div class="filed__item">
-      <p class="field__item-label field__item-necessary">Ед.измерения:</p>
+      <p class="field__item-label field__item-necessary">Цена за единицу:</p>
       <div>
         <div class="price"><span>&#8381;</span>
         <input

@@ -38,7 +38,7 @@ export default {
     let products = ref([
       {
         id: 0,
-        name: "Сахар",
+        name: "Сахар 1кг",
         code: "001956",
         price: 90,
         unit: "шт",
@@ -62,7 +62,7 @@ export default {
         return products.value.filter(
           (item) =>
             item.name.toLowerCase().includes(searchValue.value.toLowerCase()) ||
-            item.article
+            item.code
               .toLowerCase()
               .includes(searchValue.value.toLowerCase()) ||
             item.price.toString().includes(searchValue.value)
@@ -113,6 +113,11 @@ export default {
   gap: 5px;
   padding-bottom: 10px;
   overflow-y: visible;
+  border: 2px solid #eeee;
+  height: 600px;
+  padding: 10px;
+  border-radius: 15px;
+  overflow-y: scroll;
 }
 
 @media screen and (max-height: 900px) {

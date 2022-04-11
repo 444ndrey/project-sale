@@ -41,6 +41,8 @@ export default {
   border: 1px solid rgba(187, 187, 187, 0.933);
   user-select: none;
   transition: background-color 0.1s ease-in-out;
+  height: 150px;
+  background-color: white;
 }
 .card:hover {
   background-color: #eeee;

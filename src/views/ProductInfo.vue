@@ -9,8 +9,10 @@
       </div>
       </div>
       <div class="control-win">
-        <h2 class="title1">IN DEV</h2>
-        <canvas id="chartAmonutByPrice" width="600" height="400"></canvas>
+        <h2 class="title1">Подробно</h2>
+        <div class="chart-amountbyprice">
+          <AmountByPriceChart :data="product.items"></AmountByPriceChart>
+        </div>
       </div>
     </div>
   </div>
@@ -20,19 +22,22 @@
 import { useRoute } from "vue-router";
 import {ref} from 'vue'
 import TheProductForm from "../components/TheProductForm.vue";
+import AmountByPriceChart from "../components/AmountByPriceChart.vue";
 export default {
     setup() {
         const route = useRoute();
         const products = [
             {
                 id: 0,
-                name: "Сахар",
+                name: "Сахар 1кг",
                 code: "001956",
                 price: 90,
                 unit: "шт",
                 items: [
                     { id: 0, price: 75, amount: 20 },
                     { id: 1, price: 77, amount: 12 },
+                    { id: 2, price: 72, amount: 100 },
+                    { id: 3, price: 80, amount: 5 },
                 ],
             },
             {
@@ -41,13 +46,13 @@ export default {
                 code: "001253",
                 price: 177,
                 unit: "шт",
-                items: [{ id: 0, price: 3, amount: 203 }],
+                items: [{ id: 0, price: 123, amount: 203 }],
             },
         ];
         const product = ref(products.find(a => a.id == route.query.id));
         return { product };
     },
-    components: { TheProductForm }
+    components: { TheProductForm, AmountByPriceChart }
 };
 function drawPriceByAmount(){
 
@@ -67,7 +72,10 @@ function drawPriceByAmount(){
 .buttons-wrapper{
   width: 100%;
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
   gap: 10px;
+}
+.chart-amountbyprice{
+  height: 300px;
 }
 </style>

@@ -28,7 +28,6 @@
           <input type="text" class="control-input" maxlength="25" v-model="agent.email"  placeholder="Email"/>
           </div>
       </div>
-      <!-- <AdditionalParams :params="agent.params"></AdditionalParams> -->
       <div class="buttons">
         <button class="btn1" @click="addAgent">Добавить</button>
         <button class="btn2" @click="$router.go(-1)">Назад</button>
@@ -39,7 +38,6 @@
 
 <script>
 import {computed, ref} from 'vue'
-import AdditionalParams from '../components/AdditionalParams.vue';
 export default {
     setup() {
         const agent = ref({
@@ -80,7 +78,6 @@ export default {
         }
         return {agent,addAgent, error};
     },
-    components: { AdditionalParams}
 };
 </script>
 

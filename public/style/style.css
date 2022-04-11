@@ -4,6 +4,9 @@
     --red: #df4949;
     --red-light: #ee5555;
 }
+button{
+    user-select: none;
+}
 * {
     box-sizing: border-box;
     font-family: Calibri;

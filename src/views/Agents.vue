@@ -9,7 +9,9 @@
           placeholder="Поиск название, ИНН"
           v-model="searchValue"
         />
-        <button class="btn1" @click="$router.push('NewAgent')">Добавить контрагента</button>
+        <button class="btn1" @click="$router.push('NewAgent')">
+          Добавить контрагента
+        </button>
       </div>
       <table class="table">
         <th class="table__header">Имя</th>
@@ -24,8 +26,13 @@
           <td class="table__value">{{ item.address }}</td>
           <td class="table__value">{{ item.phone }}</td>
           <td class="table__value">
-            <a @click="$router.push({name: 'EdtAgent', query:{id:item.id}})" class="table__value-link"
-              >открыть</a>
+            <a
+              @click="
+                $router.push({ name: 'EdtAgent', query: { id: item.id } })
+              "
+              class="table__value-link"
+              >открыть</a
+            >
           </td>
           <td class="table__value">
             <button class="table__value-del">&#10006;</button>
@@ -42,6 +49,7 @@
 <script>
 import { computed } from "@vue/runtime-core";
 import { ref } from "vue";
+import { ipcRenderer } from "electron";
 export default {
   setup() {
     let agents = [
@@ -78,14 +86,18 @@ export default {
       }
       return agents;
     });
-
     return { searchValue, searchAgents };
+  },
+  created() {
+    ipcRenderer.send("get-all-agents");
+    ipcRenderer.on("send-all-agents", (e, data) => {
+      console.log(data);
+    });
   },
 };
 </script>
 
 <style scoped>
-
 .win__panel {
   display: flex;
   justify-content: left;
@@ -112,9 +124,9 @@ export default {
   padding: 10px 10px;
   word-break: break-all;
 }
-.table__value::selection{
+.table__value::selection {
   background-color: var(--red-light);
-    color: white;
+  color: white;
 }
 .table__row {
   border-radius: 10px;

@@ -6,6 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "electron:build": "vue-cli-service electron:build",
+    "rebuild": "electron-rebuild -f -w better-sqlite3",
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps"
@@ -14,6 +15,9 @@
   "dependencies": {
     "better-sqlite3": "^7.5.1",
     "chart.js": "^3.7.1",
+    "electron-rebuild": "^3.2.7",
+    "knex": "^1.0.7",
+    "sqlite3": "^5.0.2",
     "vue": "^3.0.0",
     "vue-chartjs": "^4.0.5",
     "vue-router": "^4.0.0-0",

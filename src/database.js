@@ -1,10 +1,16 @@
-const sqlite = require('better-sqlite3');
-const db = new sqlite('./database.sqlite');
-exports.db = db;
+const knex = require('knex').knex({
+    client: 'better-sqlite3',
+    connection: {
+        filename: './database.sqlite'
+    },
+    useNullAsDefault: true
+})
 
-// FUNCTIONS 
-exports.getAgent = () => {
-    const sql = "SELECT * FROM Agent";
-    let stmt = db.prepare(sql);
-    return stmt.all();
+exports.getAgents = () => {
+    return knex.select().from('Agent');
 }
+
+
+
+
+

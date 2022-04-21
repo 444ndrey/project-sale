@@ -1,6 +1,8 @@
 <template>
   <div>
+    <Dialog :isActive="dialog.isDialogShown" :message="dialog.message" :type="dialog.type" :handler="dialog.dialogFunc" @update="updateList()"></Dialog>
     <div class="control-win container">
+      <h2 class="tilte1">Контрагенты</h2>
       <div class="win__panel">
         <input
           class="control-search1"
@@ -20,7 +22,7 @@
         <th class="table__header">Телефон</th>
         <th class="table__header">Подробнее</th>
         <th class="table__header">Удалить</th>
-        <tr class="table__row" v-for="item in searchAgents" :key="item.id">
+        <tr class="table__row" v-for="item in filtredAgents" :key="item.id">
           <td class="table__value">{{ item.name }}</td>
           <td class="table__value">{{ item.inn }}</td>
           <td class="table__value">{{ item.address }}</td>
@@ -35,11 +37,13 @@
             >
           </td>
           <td class="table__value">
-            <button class="table__value-del">&#10006;</button>
+            <button class="table__value-del" @click="removeAgent(item.id)">
+              &#10006;
+            </button>
           </td>
         </tr>
       </table>
-      <p class="table-empty" v-if="searchAgents.length == 0">
+      <p class="table-empty" v-if="filtredAgents.length == 0">
         Ой, тут пусто :(
       </p>
     </div>
@@ -47,53 +51,64 @@
 </template>
 
 <script>
-import { computed } from "@vue/runtime-core";
-import { ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { ipcRenderer } from "electron";
+import Dialog from "../components/uiControls/Dialog.vue";
 export default {
   setup() {
-    let agents = [
-      {
-        id: 0,
-        name: 'ооо"Магазин"',
-        inn: "141131510365",
-        address: "г.Москва ул.Улчиная д.17",
-        phone: "8 123 4567089",
-      },
-      {
-        id: 1,
-        name: "ИП Иванов",
-        inn: "757040423077",
-        address: "г.Москва ул.Другая 18",
-        phone: "8 123 4567089",
-      },
-      {
-        id: 2,
-        name: 'оао "ИДЕЯ"',
-        inn: "621883385834",
-        address: "г.Ярославль ул.Ярославская д.9",
-        phone: "8 123 4567089",
-      },
-    ];
+    let agents = ref([]);
+    let dialog = ref({
+      dialogFunc : () => {},
+      isDialogShown: false,
+      type: undefined,
+      message: undefined
+    })
+    onMounted(() => {
+      fillAgentsList();
+    });
+    function fillAgentsList() {
+      ipcRenderer.send("get-all-agents");
+      ipcRenderer.on("send-all-agents", (e, data) => {
+        agents.value = data.map((item) => {
+          return {
+            id: item.id,
+            name: item.name,
+            inn: item.inn,
+            address: item.address,
+            phone: item.phone,
+          };
+        });
+      });
+    }
     let searchValue = ref("");
-    let searchAgents = computed(() => {
+    let filtredAgents = computed(() => {
       if (searchValue.value.length > 0) {
-        return agents.filter(
+        return agents.value.filter(
           (item) =>
-            item.name.toLowerCase().includes(searchValue.value.toLowerCase()) ||
-            item.inn.toLowerCase().includes(searchValue.value.toLowerCase())
+            item.name
+              .toLowerCase()
+              .includes(searchValue.value.toLocaleLowerCase()) ||
+            item.inn.includes(searchValue.value)
         );
       }
-      return agents;
+      return agents.value;
     });
-    return { searchValue, searchAgents };
+    function removeAgent(id) {
+      dialog.value.type = 'warning',
+      dialog.value.message = 'Вы действительно хотите удалить этого агента ?';
+      dialog.value.isDialogShown = true;
+      dialog.value.dialogFunc = () => {
+        let agentId = id;
+        return ipcRenderer.invoke("remove-agent", agentId);
+      };
+    }
+    function updateList(){
+      fillAgentsList();
+      dialog.value.isDialogShown = false;
+    }
+    return { searchValue, filtredAgents, removeAgent, dialog, updateList };
   },
-  created() {
-    ipcRenderer.send("get-all-agents");
-    ipcRenderer.on("send-all-agents", (e, data) => {
-      console.log(data);
-    });
-  },
+  components: { Dialog },
 };
 </script>
 

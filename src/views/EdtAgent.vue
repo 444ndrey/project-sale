@@ -82,41 +82,28 @@
 </template>
 
 <script>
-import { useRoute } from "vue-router";
-import { ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { onMounted, ref } from "vue";
+import { ipcRenderer } from "electron";
 export default {
   setup() {
     const route = useRoute();
-    const agents = [
-      {
-        id: 0,
-        name: 'ооо"Магазин"',
-        inn: "141131510365",
-        kpp: "000000000",
-        address: "г.Москва ул.Улчиная д.17",
-        phone: "8 123 4567089",
-        email: "some@gmail.com",
-      },
-      {
-        id: 1,
-        name: "ИП Иванов",
-        inn: "757040423077",
-        kpp: "000000000",
-        address: "г.Москва ул.Другая 18",
-        phone: "8 123 4567089",
-        email: "some@gmail.com",
-      },
-      {
-        id: 2,
-        name: 'оао "ИДЕЯ"',
-        inn: "621883385834",
-        kpp: "000000000",
-        address: "г.Ярославль ул.Ярославская д.9",
-        phone: "8 123 4567089",
-        email: "some@gmail.com",
-      },
-    ];
-    const agent = ref(agents.find((item) => item.id == route.query.id));
+    const router = useRouter();
+    const agent = ref({id: 0, name: '', inn: '', kpp: '', address: '', phone: '', email: '' });
+    onMounted(() => {
+        ipcRenderer.send('get-agent-info',route.query.id);
+        ipcRenderer.on('send-agent-info', (e, data) => {
+            agent.value = {
+                id: data.id,
+                name: data.name,
+                kpp: data.kpp,
+                inn: data.inn,
+                address: data.address,
+                phone: data.phone,
+                email: data.email
+            }
+        });
+    });
     let error = ref({
       messages: [],
       isActive: false,
@@ -142,21 +129,34 @@ export default {
       if (agent.value.kpp.length < 9 && agent.value.kpp.length != 0) {
         error.value.messages.push({ value: "КПП указан некорректно" });
       }
-      if(!validInnKppNumber(agent.value.kpp,agent.value.inn)){
-          error.value.messages.push({ value: "Может содержать только цифры" });
+      if (!validInnKppNumber(agent.value.kpp, agent.value.inn)) {
+        error.value.messages.push({ value: "Может содержать только цифры" });
       }
+
       if (error.value.messages.length != 0) {
         error.value.isActive = true;
       }
+      else{
+        let message = {
+                id: agent.value.id,
+                name: agent.value.name,
+                kpp: agent.value.kpp,
+                inn: agent.value.inn,
+                address: agent.value.address,
+                phone: agent.value.phone,
+                email: agent.value.email
+        }
+          ipcRenderer.send('edit-agent',message);
+          router.go(-1);
+      }
     }
     function validInnKppNumber(...args) {
-      for(let item of args){
-        for(let i of [...item]){
-
-          if(parseInt(i).toString() != i.toString()) {
-            return false
+      for (let item of args) {
+        for (let i of [...item]) {
+          if (parseInt(i).toString() != i.toString()) {
+            return false;
+          }
         }
-      }
       }
       return true;
     }

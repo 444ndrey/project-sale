@@ -1,5 +1,12 @@
 <template>
   <div>
+    <Dialog
+      :isActive="dialog.isDialogShown"
+      :type="dialog.type"
+      :handler="dialog.dialogFunc"
+      :message="dialog.message"
+      @update="$router.go(-1)"
+    ></Dialog>
     <div class="control-win container">
       <h2 class="title1">
         {{ agent.name.length > 0 ? agent.name : "Контрагент" }}
@@ -75,7 +82,8 @@
       </div>
       <div class="buttons">
         <button class="btn1" @click="saveAgent">Сохранить</button>
-        <button class="btn2" @click="$router.go(-1)">Назад</button>
+        <button class="btn2" @click="delAgent">Удалить</button>
+        <button class="btn2" @click="$router.go(-1)">Отмена</button>
       </div>
     </div>
   </div>
@@ -85,24 +93,39 @@
 import { useRoute, useRouter } from "vue-router";
 import { onMounted, ref } from "vue";
 import { ipcRenderer } from "electron";
+import Dialog from "../components/uiControls/Dialog.vue";
 export default {
   setup() {
+    let dialog = ref({
+      dialogFunc: () => {},
+      isDialogShown: false,
+      type: undefined,
+      message: undefined,
+    });
     const route = useRoute();
     const router = useRouter();
-    const agent = ref({id: 0, name: '', inn: '', kpp: '', address: '', phone: '', email: '' });
+    const agent = ref({
+      id: 0,
+      name: "",
+      inn: "",
+      kpp: "",
+      address: "",
+      phone: "",
+      email: "",
+    });
     onMounted(() => {
-        ipcRenderer.send('get-agent-info',route.query.id);
-        ipcRenderer.on('send-agent-info', (e, data) => {
-            agent.value = {
-                id: data.id,
-                name: data.name,
-                kpp: data.kpp,
-                inn: data.inn,
-                address: data.address,
-                phone: data.phone,
-                email: data.email
-            }
-        });
+      ipcRenderer.send("get-agent-info", route.query.id);
+      ipcRenderer.on("send-agent-info", (e, data) => {
+        agent.value = {
+          id: data.id,
+          name: data.name,
+          kpp: data.kpp,
+          inn: data.inn,
+          address: data.address,
+          phone: data.phone,
+          email: data.email,
+        };
+      });
     });
     let error = ref({
       messages: [],
@@ -132,22 +155,20 @@ export default {
       if (!validInnKppNumber(agent.value.kpp, agent.value.inn)) {
         error.value.messages.push({ value: "Может содержать только цифры" });
       }
-
       if (error.value.messages.length != 0) {
         error.value.isActive = true;
-      }
-      else{
+      } else {
         let message = {
-                id: agent.value.id,
-                name: agent.value.name,
-                kpp: agent.value.kpp,
-                inn: agent.value.inn,
-                address: agent.value.address,
-                phone: agent.value.phone,
-                email: agent.value.email
-        }
-          ipcRenderer.send('edit-agent',message);
-          router.go(-1);
+          id: agent.value.id,
+          name: agent.value.name,
+          kpp: agent.value.kpp,
+          inn: agent.value.inn,
+          address: agent.value.address,
+          phone: agent.value.phone,
+          email: agent.value.email,
+        };
+        ipcRenderer.send("edit-agent", message);
+        router.go(-1);
       }
     }
     function validInnKppNumber(...args) {
@@ -160,9 +181,18 @@ export default {
       }
       return true;
     }
-
-    return { agent, saveAgent, error };
+    function delAgent() {
+      dialog.value.type = "warning";
+      dialog.value.message = "Вы действительно хотите удалить этого агента ?";
+      dialog.value.isDialogShown = true;
+      dialog.value.dialogFunc = () => {
+        let agentId = agent.value.id;
+        return ipcRenderer.invoke("remove-agent", agentId);
+      };
+    }
+    return { agent, saveAgent, error, dialog, delAgent };
   },
+  components: { Dialog },
 };
 </script>
 

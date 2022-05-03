@@ -3,24 +3,31 @@
     <div>
       <div class="card__name">{{ product.name.length < 20 ? product.name : product.name.slice(0,19)+'...'}}</div>
       <div class="card__article">Арт.{{ product.code }}</div>
-      <div class="card__amount">{{ amount }} {{ product.unit }}.</div>
+      <div class="card__amount">{{ amount }} {{ product.unit }}. в наличии</div>
     </div>
     <div class="card__price">{{ product.price }}&#8381;</div>
   </div>
 </template>
 
 <script>
-import { computed } from "@vue/runtime-core";
+import { computed,onMounted,ref } from "@vue/runtime-core";
+import { ipcRenderer } from 'electron';
 export default {
   props: ["product"],
   setup(props) {
-    const amount = computed(() => {
-      return props.product.items
-        .map((item) => {
-          return item.amount;
-        })
-        .reduce((sum, a) => sum + a);
-    });
+    const amount = ref(0);
+    onMounted(() => {
+       setAmount();;
+    })
+    function setAmount(){
+       ipcRenderer.invoke('get-enities',props.product.id).then(res => {
+         let total = 0;
+         res.forEach(el => {
+           total += el.amount;
+         });
+        amount.value = total;
+      });
+    }
     return { amount };
   },
 };

@@ -1,70 +1,69 @@
 <template>
   <div class="wrapper">
-      <div class="grid container">
-        <!-- <div class="grid__item grid__item-header"></div> -->
-        <div class="grid__item"></div>
-        <div class="grid__item">
-          <div class="list__panel">
-            <input
-              type="text"
-              v-model="searchValue"
-              class="control-search1"
-              maxlength="20"
-              placeholder="Поиск название, артикул, цена"
-            />
-            <button class="btn1" @click="$router.push({name:'NewProduct'})">Добавить товар</button>
-          </div>
-          <h2 class="title1">
-            {{ searchProduct.length > 0 ? "Товар в наличии" : "Нет товара..." }}
-          </h2>
-          <div class="list__items">
-            <ProductCard
-              v-for="item in searchProduct"
-              :product="item"
-              :key="item.id"
-              @dblclick="$router.push({name: 'ProdctInfo', query:{id:item.id}})"
-            ></ProductCard>
-          </div>
+    <div class="grid container">
+      <!-- <div class="grid__item grid__item-header"></div> -->
+      <div class="grid__item"></div>
+      <div class="grid__item">
+        <div class="list__panel">
+          <input
+            type="text"
+            v-model="searchValue"
+            class="control-search1"
+            maxlength="20"
+            placeholder="Поиск название, артикул, цена"
+          />
+          <button class="btn1" @click="$router.push({ name: 'NewProduct' })">
+            Добавить товар
+          </button>
+        </div>
+        <h2 class="title1">
+          {{ searchProduct.length > 0 ? "Товар в наличии" : "Нет товара..." }}
+        </h2>
+        <div class="list__items">
+          <ProductCard
+            v-for="item in searchProduct"
+            :product="item"
+            :key="item.id"
+            @dblclick="
+              $router.push({ name: 'ProdctInfo', query: { id: item.id } })
+            "
+          ></ProductCard>
         </div>
       </div>
+    </div>
   </div>
 </template>
 
 <script scoped>
 import ProductCard from "../components/uiControls/ProductCard.vue";
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
+import { ipcRenderer } from "electron";
 export default {
   setup() {
-    let products = ref([
-      {
-        id: 0,
-        name: "Сахар 1кг",
-        code: "001956",
-        price: 90,
-        unit: "шт",
-        items: [
-          { id: 0, price: 75, amount: 20 },
-          { id: 1, price: 77, amount: 12 },
-        ],
-      },
-      {
-        id: 1,
-        name: "Гвозди 50 шт пачка",
-        code: "001253",
-        price: 177,
-        unit: "шт",
-        items: [{ id: 0, price: 3, amount: 203 }],
-      },
-    ]);
+    function fillProductList() {
+      ipcRenderer.invoke("get-all-products").then((res) => {
+        products.value = res.map((item) => {
+          return {
+            id: item.id,
+            name: item.name,
+            code: item.code,
+            price: item.price,
+            unit: item.unit,
+          };
+        });
+      });
+    }
+    onMounted(() => {
+      fillProductList();
+    });
+    let products = ref([]);
     let searchValue = ref("");
     let searchProduct = computed(() => {
       if (searchValue.value.length > 0) {
         return products.value.filter(
           (item) =>
             item.name.toLowerCase().includes(searchValue.value.toLowerCase()) ||
-            item.code
-              .toLowerCase()
-              .includes(searchValue.value.toLowerCase()) ||
+            item.code.toLowerCase().includes(searchValue.value.toLowerCase()) ||
             item.price.toString().includes(searchValue.value)
         );
       }
@@ -78,7 +77,7 @@ export default {
 </script>
 
 <style scoped>
-.wrapper{
+.wrapper {
   height: 100%;
 }
 .grid {
@@ -101,7 +100,8 @@ export default {
 }
 .list__panel {
   display: flex;
-  justify-content: space-between;
+  gap: 30px;
+  align-items: center;
   margin-bottom: 50px;
 }
 .list__title {

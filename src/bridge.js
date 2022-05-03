@@ -1,10 +1,6 @@
-const { ipcMain, electron,} = require('electron');
+const { ipcMain, electron} = require('electron');
 const db = require('./database.js');
-
-
-
 module.exports = {
-
     listen: () => {
         ipcMain.on('get-all-agents', (e, ...args) => {
             db.getAgents().then(res => {
@@ -19,9 +15,6 @@ module.exports = {
         ipcMain.on('add-agent', (e, agent) => {
             db.addAgent(agent);
         });
-        // ipcMain.on('remove-agent', (e, id) => {
-        //     db.removeAgentbyId(id);
-        // });
         ipcMain.handle('remove-agent', (e, id) => {
             db.removeAgentbyId(id).then(() => {
                 return true;
@@ -30,6 +23,18 @@ module.exports = {
         ipcMain.on('edit-agent',(e,agent) => {
             db.edtAgent(agent);
         });
+        ipcMain.handle('get-all-products',(e) => {
+           return db.getProducts().then((res) => {
+                return res;
+            })
+        });
+        ipcMain.handle('get-enities',(e,product) => {
+           return db.getEntities(product).then(res => res)
+
+        });
+        ipcMain.handle('get-product-info',(e,id) => {
+            return db.getProductbyId(id).then(res => res);
+        })
         
     }
 }

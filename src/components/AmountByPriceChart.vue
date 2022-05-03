@@ -15,6 +15,7 @@ import {
   CategoryScale,
   LinearScale,
 } from "chart.js";
+import { computed } from "@vue/runtime-core";
 ChartJS.register(
   Title,
   Tooltip,
@@ -27,27 +28,30 @@ export default {
   components: { Bar },
   props: ["data"],
   setup(props) {
-    const chartData = {
-      labels: props.data.map((a) => `${a.amount} ед. по ${a.price} руб.`),
-      datasets: [
-        {
-          label: "Кол-во товара закупочной цене",
-          backgroundColor: ["#ff9191"],
-          borderColor: '#ff4242',
-          borderWidth: 3,
-          borderRadius: 10,
-          data: props.data.map((a) => a.amount),
-        },
-      ],
-      options: {
-        maintainAspectRatio: false,
-        scales: {
-          y: {
-            beingAtZero: true,
+    console.log(props.data);
+    const chartData = computed(() => {
+      return {
+        labels: props.data.map((a) => `${a.amount} ед. по ${a.cost} руб.`),
+        datasets: [
+          {
+            label: "Кол-во товара по этозакупочной цене",
+            backgroundColor: ["#ff9191"],
+            borderColor: "#ff4242",
+            borderWidth: 3,
+            borderRadius: 10,
+            data: props.data.map((a) => a.amount),
+          },
+        ],
+        options: {
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beingAtZero: true,
+            },
           },
         },
-      },
-    };
+      };
+    });
     return { chartData };
   },
 };

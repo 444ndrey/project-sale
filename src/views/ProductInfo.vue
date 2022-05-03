@@ -11,7 +11,7 @@
       <div class="control-win">
         <h2 class="title1">Подробно</h2>
         <div class="chart-amountbyprice">
-          <AmountByPriceChart :data="product.items"></AmountByPriceChart>
+          <AmountByPriceChart :data="items"></AmountByPriceChart>
         </div>
       </div>
     </div>
@@ -20,37 +20,30 @@
 
 <script>
 import { useRoute } from "vue-router";
-import {ref} from 'vue'
+import {onMounted, ref} from 'vue'
 import TheProductForm from "../components/TheProductForm.vue";
 import AmountByPriceChart from "../components/AmountByPriceChart.vue";
+import { ipcRenderer } from 'electron';
 export default {
     setup() {
         const route = useRoute();
-        const products = [
-            {
-                id: 0,
-                name: "Сахар 1кг",
-                code: "001956",
-                price: 90,
-                unit: "шт",
-                items: [
-                    { id: 0, price: 75, amount: 20 },
-                    { id: 1, price: 77, amount: 12 },
-                    { id: 2, price: 72, amount: 100 },
-                    { id: 3, price: 80, amount: 5 },
-                ],
-            },
-            {
-                id: 1,
-                name: "Гвозди 50 шт пачка",
-                code: "001253",
-                price: 177,
-                unit: "шт",
-                items: [{ id: 0, price: 123, amount: 203 }],
-            },
-        ];
-        const product = ref(products.find(a => a.id == route.query.id));
-        return { product };
+        const items = ref([]);
+        const product = ref({});
+        onMounted(() => {
+          setupProductInfo();
+          setupItems();
+        });
+        function setupProductInfo(){
+          ipcRenderer.invoke('get-product-info',route.query.id).then(res => {
+              product.value = res;
+          });
+        }
+        function setupItems(){
+          ipcRenderer.invoke('get-enities',route.query.id).then(res => {
+            items.value = res;
+          });
+        }
+        return { product, items };
     },
     components: { TheProductForm, AmountByPriceChart }
 };

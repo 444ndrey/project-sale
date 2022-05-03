@@ -1,6 +1,12 @@
 <template>
   <div>
-    <Dialog :isActive="dialog.isDialogShown" :message="dialog.message" :type="dialog.type" :handler="dialog.dialogFunc" @update="updateList()"></Dialog>
+    <Dialog
+      :isActive="dialog.isDialogShown"
+      :message="dialog.message"
+      :type="dialog.type"
+      :handler="dialog.dialogFunc"
+      @update="updateList()"
+    ></Dialog>
     <div class="control-win container">
       <h2 class="tilte1">Контрагенты</h2>
       <div class="win__panel">
@@ -15,34 +21,38 @@
           Добавить контрагента
         </button>
       </div>
-      <table class="table">
-        <th class="table__header">Имя</th>
-        <th class="table__header">ИНН</th>
-        <th class="table__header">Адрес</th>
-        <th class="table__header">Телефон</th>
-        <th class="table__header">Подробнее</th>
-        <th class="table__header">Удалить</th>
-        <tr class="table__row" v-for="item in filtredAgents" :key="item.id">
-          <td class="table__value">{{ item.name }}</td>
-          <td class="table__value">{{ item.inn }}</td>
-          <td class="table__value">{{ item.address }}</td>
-          <td class="table__value">{{ item.phone }}</td>
-          <td class="table__value">
-            <a
-              @click="
-                $router.push({ name: 'EdtAgent', query: { id: item.id } })
-              "
-              class="table__value-link"
-              >открыть</a
-            >
-          </td>
-          <td class="table__value">
-            <button class="table__value-del" @click="removeAgent(item.id)">
-              &#10006;
-            </button>
-          </td>
-        </tr>
-      </table>
+      <div class="table-wrapper">
+        <table class="table">
+          <th class="table__header">Имя</th>
+          <th class="table__header">ИНН</th>
+          <th class="table__header">Адрес</th>
+          <th class="table__header">Телефон</th>
+          <th class="table__header">Подробнее</th>
+          <th class="table__header">Удалить</th>
+          <tbody>
+            <tr class="table__row" v-for="item in filtredAgents" :key="item.id">
+              <td class="table__value">{{ item.name }}</td>
+              <td class="table__value">{{ item.inn }}</td>
+              <td class="table__value">{{ item.address }}</td>
+              <td class="table__value">{{ item.phone }}</td>
+              <td class="table__value">
+                <a
+                  @click="
+                    $router.push({ name: 'EdtAgent', query: { id: item.id } })
+                  "
+                  class="table__value-link"
+                  >открыть</a
+                >
+              </td>
+              <td class="table__value">
+                <button class="table__value-del" @click="removeAgent(item.id)">
+                  &#10006;
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <p class="table-empty" v-if="filtredAgents.length == 0">
         Ой, тут пусто :(
       </p>
@@ -58,11 +68,11 @@ export default {
   setup() {
     let agents = ref([]);
     let dialog = ref({
-      dialogFunc : () => {},
+      dialogFunc: () => {},
       isDialogShown: false,
       type: undefined,
-      message: undefined
-    })
+      message: undefined,
+    });
     onMounted(() => {
       fillAgentsList();
     });
@@ -94,15 +104,16 @@ export default {
       return agents.value;
     });
     function removeAgent(id) {
-      dialog.value.type = 'warning',
-      dialog.value.message = 'Вы действительно хотите удалить этого агента ?';
+      (dialog.value.type = "warning"),
+        (dialog.value.message =
+          "Вы действительно хотите удалить этого агента ?");
       dialog.value.isDialogShown = true;
       dialog.value.dialogFunc = () => {
         let agentId = id;
         return ipcRenderer.invoke("remove-agent", agentId);
       };
     }
-    function updateList(){
+    function updateList() {
       fillAgentsList();
       dialog.value.isDialogShown = false;
     }
@@ -124,13 +135,22 @@ export default {
   width: 100%;
   border-collapse: collapse;
   table-layout: auto;
+  overflow: auto;
+  position: relative;
+}
+.table-wrapper {
+  max-height: 600px;
+  overflow-y: auto;
 }
 .table__header {
   text-align: left;
   color: var(--gray-main);
   padding: 10px 5px;
-  border-bottom: 1px solid rgba(209, 209, 209, 0.933);
-  /* border-bottom: 1px solid var(--gray-main); */
+  /* border-bottom: 1px solid rgba(209, 209, 209, 0.933); */
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  background-color: #fff;
 }
 .table__value {
   color: var(--gray-secound);

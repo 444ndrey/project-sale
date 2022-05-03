@@ -41,7 +41,7 @@
       <div>
         <div class="price"><span>&#8381;</span>
         <input
-          type="number"
+          type="text"
           class="control-input price-input"
           min="1"
           max="10000000"
@@ -83,7 +83,7 @@ export default {
   setup(props) {
     function addParam() {}
     function delParam() {}
-    return { addParam, delParam};
+    return { addParam, delParam,};
   },
 };
 </script>

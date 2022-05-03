@@ -36,6 +36,16 @@ exports.edtAgent = agent => {
         email: agent.email
     }).then((res) => res);
 }
+exports.getProducts = () => {
+    let result = knex.select().from('Product')
+    return result;
+}
+exports.getEntities = id => {
+    return knex.select().from('Entity').where('product',id);
+}
+exports.getProductbyId = id => {
+    return knex.select().from('Product').where('id',id).first();
+}
 
 
 

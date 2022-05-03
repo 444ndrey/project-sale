@@ -7,7 +7,9 @@ import Stat from '../views/Stat.vue';
 import NewAgent from '../views/NewAgent.vue';
 import EdtAgent from '../views/EdtAgent.vue';
 import NewProduct from '../views/NewProduct.vue';
-import ProdctInfo from '../views/ProductInfo.vue'
+import ProdctInfo from '../views/ProductInfo.vue';
+import Welcome  from '../views/Welcome.vue';
+
 //#endregion
 const routes = [
   {
@@ -49,6 +51,11 @@ const routes = [
     path: '/productinfo',
     name: 'ProdctInfo',
     component: ProdctInfo
+  },
+  {
+    path: '',
+    name: 'Welcome',
+    component: Welcome
   }
 ]
 

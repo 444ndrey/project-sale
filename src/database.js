@@ -35,16 +35,35 @@ exports.edtAgent = agent => {
         phone: agent.phone,
         email: agent.email
     }).then((res) => res);
-}
+};
 exports.getProducts = () => {
     let result = knex.select().from('Product')
     return result;
-}
+};
 exports.getEntities = id => {
     return knex.select().from('Entity').where('product',id);
-}
+};
 exports.getProductbyId = id => {
     return knex.select().from('Product').where('id',id).first();
+};
+exports.saveChanges = product => {
+    knex('Product').where('id',product.id).update({
+        code: product.code,
+        price: product.price,
+        unit: product.unit,
+        name: product.name
+    }).then(res => res);
+}
+exports.addProduct = product => {
+    knex.insert({
+        code: product.code,
+        price: parseFloat(product.price),
+        unit: product.unit,
+        name: product.name
+    }).into('Product').then(res => res);
+}
+exports.removeProductbyId = id => {
+    return knex('Product').where('id',id).del().then((res) => res);
 }
 
 

@@ -14,7 +14,7 @@
           class="control-search1"
           type="text"
           maxlength="20"
-          placeholder="Поиск название, ИНН"
+          placeholder="Поиск название, ИНН, адрес"
           v-model="searchValue"
         />
         <button class="btn1" @click="$router.push('NewAgent')">
@@ -23,7 +23,7 @@
       </div>
       <div class="table-wrapper">
         <table class="table">
-          <th class="table__header">Имя</th>
+          <th class="table__header sortable" @click="sortName">Имя</th>
           <th class="table__header">ИНН</th>
           <th class="table__header">Адрес</th>
           <th class="table__header">Телефон</th>
@@ -73,6 +73,20 @@ export default {
       type: undefined,
       message: undefined,
     });
+    const sort = {
+        name: false,
+   };
+
+    function sortName(){
+        sort.name = !sort.name;
+        if(sort.name == true){
+          agents.value = agents.value.sort((a,b) => (a.name < b.name) ? -1 : ((b.name > a.name) ? 1 : 0));
+          console.log(agents.value);
+        }
+        else{
+          agents.value = agents.value.sort((a,b) => (a.name > b.name) ? -1 : ((b.name < a.name) ? 1 : 0));
+        }
+    }
     onMounted(() => {
       fillAgentsList();
     });
@@ -98,7 +112,8 @@ export default {
             item.name
               .toLowerCase()
               .includes(searchValue.value.toLocaleLowerCase()) ||
-            item.inn.includes(searchValue.value)
+            item.inn.includes(searchValue.value) || 
+            item.address.toLocaleLowerCase().includes(searchValue.value.toLocaleLowerCase())
         );
       }
       return agents.value;
@@ -117,7 +132,8 @@ export default {
       fillAgentsList();
       dialog.value.isDialogShown = false;
     }
-    return { searchValue, filtredAgents, removeAgent, dialog, updateList };
+    return { searchValue, filtredAgents,
+     removeAgent, dialog, updateList, sortName};
   },
   components: { Dialog },
 };
@@ -151,6 +167,7 @@ export default {
   position: sticky;
   top: 0;
   background-color: #fff;
+  user-select: none;
 }
 .table__value {
   color: var(--gray-secound);
@@ -199,5 +216,12 @@ export default {
   color: var(--gray-main);
   font-size: 18px;
   font-weight: bold;
+}
+.sortable{
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+.sortable:hover{
+  color: var(--gray-secound);
 }
 </style>

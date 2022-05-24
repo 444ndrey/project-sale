@@ -11,12 +11,35 @@ button{
     box-sizing: border-box;
     font-family: Calibri;
 }
+
+/* datepicker */
+input[type=checkbox]{
+  filter: hue-rotate(165deg);
+  cursor: pointer;
+}
+input[type=date]{
+    outline: none;
+    border: 1px solid var(--gray-main);
+    border-radius: 5px;
+    padding: 3px;
+    filter: hue-rotate(165deg);
+}
+input[type=date]::-webkit-datetime-edit {
+    color: var(--gray-secound);
+}
+
+
 p::selection,th::selection,
 h1::selection,h2::selection,
 h3::selection,h4::selection,
-h5::selection,h6::selection,a::selection{
+h5::selection,h6::selection,
+a::selection,li::selection,input::selection{
     background-color: var(--red-light);
     color: #fff;
+}
+label{
+    user-select: none;
+    cursor: pointer;
 }
 #app{
    margin-bottom: 20px;
@@ -41,7 +64,7 @@ router-link {
 .btn1 {
     cursor: pointer;
     background: var(--red);
-    border-radius: 20px;
+    border-radius: 15px;
     border: none;
     color: white;
     padding: 10px 15px;
@@ -142,6 +165,11 @@ router-link {
     background-color: var(--red-light);
     color: white;
 }
+.control-select{
+    outline: none;
+    border: 1px solid var(--gray-main);
+    border-radius: 5px;
+}
 .backpage{
     margin-left: 10px;
     background-color: transparent;
@@ -162,7 +190,10 @@ router-link {
     border-radius: 10px;
     align-items: center;
 }
-
+.cb-label{
+    margin-left: 0;
+    padding-left: 0;
+}
 @media screen and (max-width: 1600px) {
     .container {
         width: 1300px;

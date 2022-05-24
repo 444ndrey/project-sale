@@ -6,7 +6,7 @@
         <input
           type="text"
           class="control-input"
-          maxlength="30"
+          maxlength="50"
           placeholder="Название"
           v-model="product.name"
         />
@@ -32,59 +32,57 @@
           class="control-input"
           maxlength="4"
           placeholder="Ед.измерения"
-          v-model="product.unit"
-        />
+          v-model="product.unit"/>
       </div>
     </div>
     <div class="filed__item">
       <p class="field__item-label field__item-necessary">Цена за единицу:</p>
-      <div>
-        <div class="price"><span>&#8381;</span>
-        <input
-          type="text"
-          class="control-input price-input"
-          min="1"
-          max="10000000"
-          placeholder="Цена"
-          v-model="product.price"
-        />
-        </div>
-      </div>
+      <InputPrice v-model:inputValue="product.price"></InputPrice>
     </div>
   </div>
-  <!-- <div class="params">
-    <table class="params__table">
-      <th class="params__table-header">Количество от</th>
-      <th class="params__table-header">Цена</th>
-      <th></th>
-      <tr class="params__table-row" v-for="item in product.prices" :key="item.id">
-        <td class="params__table-value">
-          <input
-            type="number"
-            max="1000000"
-            maxlength="5"
-            min="1"
-            v-model="item.amount"
-            :disabled="item.isFirst"
-          />
-        </td>
-        <td class="params__table-value params-col">
-          <input type="number" max="100000000" min="0"/>
-        </td>
-      </tr>
-    </table>
-  </div> -->
+  <div class="params">
+    <p class="field__item-label">Дополнительные параметры:</p>
+    <div class="params__table">
+      <h4 class="title2">Извините, но доп.парметры пока не доступны</h4>
+    </div>
+  </div>
 </template>
 
 <script>
 import { computed, ref } from "vue";
+import InputPrice from "./uiControls/InputPrice.vue";
 export default {
-  props: ["product"],
-  setup(props) {
-    function addParam() {}
-    function delParam() {}
-    return { addParam, delParam,};
-  },
+    props: ["product"],
+    setup(props) {
+        function addParam() { }
+        function delParam() { }
+        function validPrice(e) {
+            if ((e.keyCode < 48 || e.keyCode > 57) && e.keyCode != 46) {
+                e.preventDefault();
+                return;
+            }
+            if (e.target.value.length == 0 && e.keyCode == 46) {
+                e.preventDefault();
+                return;
+            }
+            let value = e.target.value;
+            let dots = 0;
+            value.split("").forEach(i => {
+                if (i === ".") {
+                    dots++;
+                }
+            });
+            if (dots == 1 && e.keyCode == 46) {
+                e.preventDefault();
+                return;
+            }
+        }
+        function fixPrice(e) {
+            props.product.price = parseFloat(e.target.value).toFixed(2);
+        }
+        return { addParam, delParam, validPrice, fixPrice };
+    },
+    components: { InputPrice }
 };
 </script>
 
@@ -106,54 +104,15 @@ export default {
   color: #f79114;
   display: inline;
 }
-.params_table {
+.params__table {
   width: 100%;
-  border-collapse: collapse;
-  table-layout: auto;
-}
-.price__table-value {
-  width: 50%;
-  border: 1px solid #c0c0c0;
-  position: relative;
-}
-.params__table-value input {
-  width: 100%;
-  min-width: 100px;
-  outline: none;
-  border: none;
-  color: var(--gray-secound);
-  padding: 5px;
-  text-align: center;
-}
-.params__table-value input:disabled {
+  border: 1px solid #ccccccee;
+  border-radius: 5px;
+  height: 50px;
   background-color: #eeee;
-}
-.params__table-value input::selection {
-  background-color: var(--red-light);
-  color: white;
-}
-.params-col {
-  border-right: none;
-}
-.btn-more {
-  width: 100px;
-  cursor: pointer;
-  background-color: transparent;
-  border: none;
-  color: var(--gray-main);
-  border-radius: 20px;
-  transition: 0.2s ease-in-out;
-  font-weight: 400;
-}
-.btn-more:hover {
-  color: var(--gray-secound);
-}
-.del-last:hover {
-  color: #d22617;
-}
-.params-footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
+  align-items: center;
 }
 .buttons-wrapper {
   display: flex;
@@ -178,5 +137,8 @@ export default {
   font-size: 20px;
   padding-bottom: 3px;
   user-select: none;
+}
+.params{
+  margin-bottom: 30px;
 }
 </style>

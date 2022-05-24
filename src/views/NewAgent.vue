@@ -26,6 +26,7 @@
             v-model="agent.inn"
             maxlength="12"
             placeholder="ИНН"
+            @keypress="validNumber"
           />
         </div>
         <div class="field__item field__item-necessary">
@@ -35,6 +36,7 @@
             maxlength="9"
             v-model="agent.kpp"
             placeholder="КПП"
+            @keypress="validNumber"
           />
         </div>
         <div class="field__item field__item-necessary">
@@ -47,12 +49,14 @@
           />
         </div>
         <div class="field__item">
+          <!-- to add particular validate method for phone -->
           <input
             type="text"
             class="control-input"
             maxlength="11"
             v-model="agent.phone"
             placeholder="Телефон"
+            @keypress="validNumber"
           />
         </div>
         <div class="field__item">
@@ -131,7 +135,13 @@ export default {
         router.push({name: 'Agents'})
       }
     }
-    return { agent, addAgent, error };
+     function validNumber(e) {
+        if((e.keyCode < 48 || e.keyCode > 57)){
+          e.preventDefault();
+          return;
+        }
+    }
+    return { agent, addAgent, error, validNumber };
   },
 };
 </script>

@@ -9,6 +9,7 @@ import EdtAgent from '../views/EdtAgent.vue';
 import NewProduct from '../views/NewProduct.vue';
 import ProdctInfo from '../views/ProductInfo.vue';
 import Welcome  from '../views/Welcome.vue';
+import NewPurchase from '../views/NewPurchase.vue';
 
 //#endregion
 const routes = [
@@ -56,7 +57,13 @@ const routes = [
     path: '',
     name: 'Welcome',
     component: Welcome
+  },
+  {
+    path: '/newpurchase',
+    name: 'NewPurchase',
+    component: NewPurchase
   }
+
 ]
 
 const router = createRouter({

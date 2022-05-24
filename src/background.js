@@ -35,6 +35,7 @@ async function createWindow() {
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
   }
+  win.maximize();
   win.removeMenu();
 }
 
@@ -74,8 +75,5 @@ if (isDevelopment) {
     })
   }
 }
-// ipcMain.on('get-all-agents', (e, ...args) => {
-//   e.reply('send-all-agents', db.getAgents())
-//   console.log('dsdsds');
-// })
+
 bridge.listen();

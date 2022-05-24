@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div class="card" v-if="!(filtredAmount && amount == 0)">
     <div>
       <div class="card__name">{{ product.name.length < 20 ? product.name : product.name.slice(0,19)+'...'}}</div>
       <div class="card__article">Арт.{{ product.code }}</div>
@@ -13,7 +13,7 @@
 import { computed,onMounted,ref } from "@vue/runtime-core";
 import { ipcRenderer } from 'electron';
 export default {
-  props: ["product"],
+  props: ["product",'filtredAmount'],
   setup(props) {
     const amount = ref(0);
     onMounted(() => {

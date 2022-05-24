@@ -28,13 +28,12 @@ export default {
   components: { Bar },
   props: ["data"],
   setup(props) {
-    console.log(props.data);
     const chartData = computed(() => {
       return {
         labels: props.data.map((a) => `${a.amount} ед. по ${a.cost} руб.`),
         datasets: [
           {
-            label: "Кол-во товара по этозакупочной цене",
+            label: "Кол-во товара по закупочной цене",
             backgroundColor: ["#ff9191"],
             borderColor: "#ff4242",
             borderWidth: 3,

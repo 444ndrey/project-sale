@@ -34,6 +34,15 @@ module.exports = {
         });
         ipcMain.handle('get-product-info',(e,id) => {
             return db.getProductbyId(id).then(res => res);
+        });
+        ipcMain.on('edit-product',(e,prodcut) => {
+            db.saveChanges(prodcut);
+        });
+        ipcMain.on('add-product',(e,product) => {
+            db.addProduct(product);
+        });
+        ipcMain.on('remove-product',(e,id) => {
+            db.removeProductbyId(id);
         })
         
     }

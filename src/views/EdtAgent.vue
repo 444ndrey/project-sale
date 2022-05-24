@@ -37,6 +37,7 @@
             class="control-input"
             maxlength="12"
             placeholder="ИНН"
+            @keypress="validNumber"
           />
         </div>
         <div class="field__item">
@@ -47,6 +48,7 @@
             class="control-input"
             maxlength="9"
             placeholder="КПП"
+            @keypress="validNumber"
           />
         </div>
         <div class="field__item">
@@ -67,6 +69,7 @@
             class="control-input"
             maxlength="11"
             placeholder="Телефон"
+            @keypress="validNumber"
           />
         </div>
         <div class="field__item">
@@ -152,9 +155,6 @@ export default {
       if (agent.value.kpp.length < 9 && agent.value.kpp.length != 0) {
         error.value.messages.push({ value: "КПП указан некорректно" });
       }
-      if (!validInnKppNumber(agent.value.kpp, agent.value.inn)) {
-        error.value.messages.push({ value: "Может содержать только цифры" });
-      }
       if (error.value.messages.length != 0) {
         error.value.isActive = true;
       } else {
@@ -171,16 +171,6 @@ export default {
         router.go(-1);
       }
     }
-    function validInnKppNumber(...args) {
-      for (let item of args) {
-        for (let i of [...item]) {
-          if (parseInt(i).toString() != i.toString()) {
-            return false;
-          }
-        }
-      }
-      return true;
-    }
     function delAgent() {
       dialog.value.type = "warning";
       dialog.value.message = "Вы действительно хотите удалить этого агента ?";
@@ -190,7 +180,13 @@ export default {
         return ipcRenderer.invoke("remove-agent", agentId);
       };
     }
-    return { agent, saveAgent, error, dialog, delAgent };
+    function validNumber(e) {
+        if((e.keyCode < 48 || e.keyCode > 57)){
+          e.preventDefault();
+          return;
+        }
+    }
+    return { agent, saveAgent, error, dialog, delAgent, validNumber };
   },
   components: { Dialog },
 };

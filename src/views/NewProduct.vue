@@ -4,9 +4,9 @@
       <div>
         <h2 class="title1">Добавить товар</h2>
         <div class="message-error" v-if="error.isActive">
-            <ul>
-              <li v-for="item in error.messages" :key="item">{{item}}</li>
-            </ul>
+          <ul>
+            <li v-for="item in error.messages" :key="item">{{ item }}</li>
+          </ul>
         </div>
         <TheProductForm :product="product"></TheProductForm>
       </div>
@@ -20,7 +20,9 @@
 
 <script>
 import TheProductForm from "../components/TheProductForm.vue";
-import {ref} from 'vue'
+import { ref } from "vue";
+import router from "../router";
+import { ipcRenderer } from 'electron';
 export default {
   components: { TheProductForm },
   setup() {
@@ -33,39 +35,38 @@ export default {
     });
     const error = ref({
       messages: [],
-      isActive: false
+      isActive: false,
     });
-    function addProduct(){
-      product.value.unit = product.value.unit.replace('.','')
-      console.log(product.value.unit)
+    function addProduct() {
+      product.value.unit = product.value.unit.replace(".", "");
+      console.log(product.value.unit);
       validateFileds();
-    };
-    function validateFileds(){
-      let requiers = ['code','name','unit']
+    }
+    function validateFileds() {
+      let requiers = ["code", "name", "unit", "price"];
       error.value.isActive = false;
       error.value.messages = [];
 
-      for(let i = 0; i < requiers.length; i++){
-        if(product.value[`${requiers[i]}`].length <= 0){
-          error.value.messages.push('Не все обязательные поля были заполнены');
+      for (let i = 0; i < requiers.length; i++) {
+        if (product.value[`${requiers[i]}`].length <= 0) {
+          error.value.messages.push("Не все обязательные поля были заполнены");
           break;
         }
       }
-      for(let item of product.value.prices){
-          if(item.price <= 0 || item.amount <= 0){
-            error.value.messages.push('Кол-во или цена не должны быть равны 0');
-            break;
-          }
+      if (product.value.price < 0) {
+        error.value.messages.push("Цена не может быть меньше 0");
       }
-      if(error.value.messages.length > 0){
-          error.value.isActive = true;
+      if (error.value.messages.length > 0) {
+        error.value.isActive = true;
+      } else {
+          let message = {};
+          Object.assign(message,product.value);
+          ipcRenderer.send('add-product',message);
+          router.go(-1);
       }
     }
-
-
-     return {product,addProduct,error}
+    return { product, addProduct, error };
   },
- 
 };
 </script>
 

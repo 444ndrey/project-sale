@@ -9,8 +9,8 @@
           placeholder="Поиск по агенту, товару, договору"
           maxlength="30"
         />
-        <button class="btn1">Оформить продажу</button>
-        <button class="btn1">Оформить покупку</button>
+        <button class="btn1" >&#8650; Оформить продажу</button>
+        <button class="btn1 btn-bought" @click="$router.push('NewPurchase')">&#8648; Оформить покупку</button>
       </div>
       <TheOperationsHistory :operations="operations" :agents="agents"></TheOperationsHistory>
     </div>
@@ -28,7 +28,6 @@ export default {
       { id: 1, agent: 0, sum: 17000, date: '08.04.2022'},
       { id: 1, agent: 1, sum: 17000, date: '08.04.2022' },
     ].map(a => ({...a, type: 'buy'}));
-    console.log(purchase)
     const sale = [
       { id: 0, agent: 0, sum: 13000, date: '30.03.2022' },
     ].map(a => ({...a, type: 'sale'}));

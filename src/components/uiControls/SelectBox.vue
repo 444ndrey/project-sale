@@ -1,9 +1,16 @@
 <template>
-  <div class="selectbox" tabindex="0" ref="selectBox" @keydown.esc="isActive = false">
+  <div
+    class="selectbox"
+    tabindex="0"
+    ref="selectBox"
+    @keydown.esc="isActive = false"
+  >
     <div
       class="selectbox-title"
-      :class="{ 'selectbox-active': isActive }" @click="toggle">
-      <p class="selectbox-selected-text">{{selected.name}}</p>
+      :class="{ 'selectbox-active': isActive }"
+      @click="toggle"
+    >
+      <p class="selectbox-selected-text">{{ selected.name }}</p>
       <span v-if="!isActive">&#9660;</span>
     </div>
     <div class="selectbox-content" v-if="isActive">
@@ -12,9 +19,16 @@
         class="selectbox-search"
         v-model="searchValue"
         placeholder="Поиск"
-        maxlength="20"/>
+        maxlength="20"
+      />
       <div class="selectbox-items">
-        <div class="selectbox-item" :class="{'selectbox-item-active' : selected.id == item.id}" v-for="item in filtredItems"  @click="select(item)" :key="item.id">
+        <div
+          class="selectbox-item"
+          :class="{ 'selectbox-item-active': selected.id == item.id }"
+          v-for="item in filtredItems"
+          @click="select(item)"
+          :key="item.id"
+        >
           {{ item.name }}
         </div>
       </div>
@@ -25,39 +39,71 @@
 <script>
 import { ref, computed } from "vue";
 export default {
-  props: ["data"],
-  emits: ['selectedItem'],
-  setup(props,ctx) {
+  props: ["data", "type"],
+  emits: ["selectedItem"],
+  setup(props, ctx) {
     let items = ref(props.data);
     let searchValue = ref("");
     let isActive = ref(false);
     let selectBox = ref(null);
-    let selected = ref({id: null, name: 'Выбрать'});
-    function toggle(event){
-        isActive.value = !isActive.value;
-        searchValue.value = '';
-        event.target.focus();
-        selectBox.value.focus();
-    };
-    function select(res){
-        selected.value = res;
-        ctx.emit('selectedItem',selected.value);
-        selectBox.value.focus();
-        isActive.value = !isActive.value;
+    let selected = ref({ id: null, name: "Выбрать" });
+    function toggle(event) {
+      isActive.value = !isActive.value;
+      searchValue.value = "";
+      event.target.focus();
+      selectBox.value.focus();
+    }
+    function select(res) {
+      selected.value = res;
+      ctx.emit("selectedItem", selected.value);
+      selectBox.value.focus();
+      isActive.value = !isActive.value;
     }
     let filtredItems = computed(() => {
       if (searchValue.value.length > 0) {
-        return  props.data.filter(
-          (item) =>
-            item.name
-              .toLowerCase()
-              .includes(searchValue.value.toLocaleLowerCase()) ||
-            item.inn.includes(searchValue.value)
-        );
+        let result;
+        switch (props.type) {
+          case "agent":
+            result = props.data.filter(
+              (item) =>
+                item.name
+                  .toLowerCase()
+                  .includes(searchValue.value.toLocaleLowerCase()) ||
+                item.inn.includes(searchValue.value)
+            );
+            break;
+          case "product":
+            result = props.data.filter(
+              (item) =>
+                item.name
+                  .toLowerCase()
+                  .includes(searchValue.value.toLocaleLowerCase()) ||
+                item.code.includes(searchValue.value)
+            );
+            break;
+
+          default:
+            result = props.data.filter((item) =>
+              item.name
+                .toLowerCase()
+                .includes(searchValue.value.toLocaleLowerCase())
+            );
+            break;
+        }
+         return result;
       }
       return props.data;
     });
-    return { isActive, searchValue, filtredItems, items, toggle, selectBox, selected, select };
+    return {
+      isActive,
+      searchValue,
+      filtredItems,
+      items,
+      toggle,
+      selectBox,
+      selected,
+      select,
+    };
   },
 };
 </script>
@@ -123,10 +169,11 @@ export default {
   text-align: left;
   padding: 5px;
   transition: 0.2s ease-in-out;
+  user-select: none;
 }
-.selectbox-item-active{
-    background-color: var(--red);
-    color: #fff;
+.selectbox-item-active {
+  background-color: var(--red);
+  color: #fff;
 }
 .selectbox-item:hover {
   background-color: var(--red-light);

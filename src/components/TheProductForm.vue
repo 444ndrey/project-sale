@@ -49,38 +49,13 @@
 </template>
 
 <script>
-import { computed, ref } from "vue";
 import InputPrice from "./uiControls/InputPrice.vue";
 export default {
     props: ["product"],
     setup(props) {
         function addParam() { }
         function delParam() { }
-        function validPrice(e) {
-            if ((e.keyCode < 48 || e.keyCode > 57) && e.keyCode != 46) {
-                e.preventDefault();
-                return;
-            }
-            if (e.target.value.length == 0 && e.keyCode == 46) {
-                e.preventDefault();
-                return;
-            }
-            let value = e.target.value;
-            let dots = 0;
-            value.split("").forEach(i => {
-                if (i === ".") {
-                    dots++;
-                }
-            });
-            if (dots == 1 && e.keyCode == 46) {
-                e.preventDefault();
-                return;
-            }
-        }
-        function fixPrice(e) {
-            props.product.price = parseFloat(e.target.value).toFixed(2);
-        }
-        return { addParam, delParam, validPrice, fixPrice };
+        return { addParam, delParam,};
     },
     components: { InputPrice }
 };

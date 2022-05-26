@@ -51,7 +51,8 @@ exports.saveChanges = product => {
         code: product.code,
         price: product.price,
         unit: product.unit,
-        name: product.name
+        name: product.name,
+        nds: product.nds
     }).then(res => res);
 }
 exports.addProduct = product => {
@@ -59,7 +60,8 @@ exports.addProduct = product => {
         code: product.code,
         price: parseFloat(product.price),
         unit: product.unit,
-        name: product.name
+        name: product.name,
+        nds: product.nds
     }).into('Product').then(res => res);
 }
 exports.removeProductbyId = id => {

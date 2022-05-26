@@ -32,6 +32,7 @@ export default {
       name: "",
       unit: "",
       price: 0,
+      nds: 0
     });
     const error = ref({
       messages: [],
@@ -39,11 +40,10 @@ export default {
     });
     function addProduct() {
       product.value.unit = product.value.unit.replace(".", "");
-      console.log(product.value.unit);
       validateFileds();
     }
     function validateFileds() {
-      let requiers = ["code", "name", "unit", "price"];
+      let requiers = ["code", "name", "unit", "price","nds"];
       error.value.isActive = false;
       error.value.messages = [];
 

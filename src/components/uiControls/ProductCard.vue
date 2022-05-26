@@ -1,7 +1,7 @@
 <template>
   <div class="card" v-if="!(filtredAmount && amount == 0)">
     <div>
-      <div class="card__name">{{ product.name.length < 20 ? product.name : product.name.slice(0,19)+'...'}}</div>
+      <div class="card__name">{{ product.name.length < 17 ? product.name : product.name.slice(0,16)+'...'}}</div>
       <div class="card__article">Арт.{{ product.code }}</div>
       <div class="card__amount">{{ amount }} {{ product.unit }}. в наличии</div>
     </div>

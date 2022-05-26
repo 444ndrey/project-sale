@@ -94,7 +94,7 @@ export default {
       }
     }
     function saveChanges() {
-      let requiers = ["code", "name", "unit", "price"];
+      let requiers = ["code", "name", "unit", "price","nds"];
       error.value.isActive = false;
       error.value.messages = [];
 

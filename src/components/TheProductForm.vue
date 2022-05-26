@@ -39,6 +39,12 @@
       <p class="field__item-label field__item-necessary">Цена за единицу:</p>
       <InputPrice v-model:inputValue="product.price"></InputPrice>
     </div>
+    <div class="filed__item filed__item-short">
+      <p class="field__item-label field__item-necessary">НДС:</p>
+      <div class="filed__item-input">
+        <input type="number" v-model="product.nds" @focusout="fixNds" @keypress="fixNdsLength" class="control-input">
+      </div>
+    </div>
   </div>
   <div class="params">
     <p class="field__item-label">Дополнительные параметры:</p>
@@ -53,9 +59,17 @@ import InputPrice from "./uiControls/InputPrice.vue";
 export default {
     props: ["product"],
     setup(props) {
-        function addParam() { }
-        function delParam() { }
-        return { addParam, delParam,};
+      function fixNdsLength(e){
+          if(e.target.value.toString().length >= 3){
+            e.preventDefault();
+          }
+      }
+      function fixNds(e){
+          if(e.target.value > 100){
+              e.target.value = 100;
+          }
+      }
+        return {fixNdsLength,fixNds};
     },
     components: { InputPrice }
 };
@@ -115,5 +129,16 @@ export default {
 }
 .params{
   margin-bottom: 30px;
+}
+.filed__item-short{
+  max-width: 150px;
+}
+.filed__item-input{
+  display: flex;
+}
+.filed__item-input::after{
+  content: '%';
+  color: var(--gray-main);
+  font-size: 20px;
 }
 </style>

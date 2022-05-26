@@ -33,7 +33,7 @@ p::selection,th::selection,
 h1::selection,h2::selection,
 h3::selection,h4::selection,
 h5::selection,h6::selection,
-a::selection,li::selection,input::selection,b::selection{
+a::selection,li::selection,input::selection,b::selection,textarea::selection{
     background-color: var(--red-light);
     color: #fff;
 }

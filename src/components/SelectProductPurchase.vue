@@ -1,4 +1,8 @@
 <template>
+<div>
+  <div class="message-error" v-if="error.isActive">
+      <ul><li v-for="item in error.messages" :key="item">{{item}}</li></ul>
+    </div>
   <div class="wrapper">
     <div>
       <label class="field-label">Номенклатура: </label>
@@ -27,11 +31,13 @@
         </div>
       </div>
       <div class="info-result">
-        <p class="sum">Сумма: &#8381;{{sum}}</p>
+        <p class="sum">Сумма: &#8381;{{ sum }}</p>
         <button class="btn1" @click="addProduct">Добавить</button>
       </div>
     </div>
   </div>
+</div>
+  
 </template>
 
 <script>
@@ -41,13 +47,19 @@ import { ref, onMounted, computed } from "vue";
 import { ipcRenderer } from "electron";
 export default {
   components: { SelectBox },
-  emits: ['addProduct'],
-  setup(props,ctx) {
+  emits: ["addProduct"],
+  setup(props, ctx) {
     let products = ref(null);
     let product = ref(null);
     let price = ref(0);
     let amount = ref(1);
-    let sum = computed(() => { return price.value * amount.value; });
+    let error = ref({
+      messages: [],
+      isActive: false
+    });
+    let sum = computed(() => {
+      return price.value * amount.value;
+    });
     function selectProduct(prod) {
       product.value = prod;
     }
@@ -64,19 +76,34 @@ export default {
         });
       });
     });
-    function addProduct(){
-      let value = {
-        product: product.value,
-        price: price.value,
-        amount: amount.value,
-        sum: sum.value
+    function addProduct() {
+      error.value.isActive = false;
+      error.value.messages = [];
+      if (price.value == 0 || price.value == null || amount.value == 0 || amount.value == null) {
+        error.value.messages.push('Цена и/или количество не могут быть пустыми или равны нулю.')
+        error.value.isActive = true;
+      } else {
+        let value = {
+          product: product.value,
+          price: price.value,
+          amount: amount.value,
+          sum: sum.value,
+        };
+        ctx.emit("addProduct", value);
       }
-      ctx.emit('addProduct',value);
-
     }
-    return { products, selectProduct, price, product,amount,sum,addProduct };
+    return {
+      products,
+      selectProduct,
+      price,
+      product,
+      amount,
+      sum,
+      addProduct,
+      error
+    };
   },
-  components: { InputPrice, SelectBox },
+  components: { InputPrice, SelectBox},
 };
 </script>
 
@@ -86,7 +113,8 @@ export default {
   border-radius: 15px;
   width: 100%;
   padding: 10px;
-  height: 170px;
+  min-height: 170px;
+  max-height: 200px;
 }
 .info {
   display: flex;
@@ -106,19 +134,23 @@ export default {
   display: flex;
   gap: 10px;
 }
-.field-label{
-    color: var(--gray-main);
+.field-label {
+  color: var(--gray-main);
 }
-.sum{
+.sum {
   font-weight: bold;
   margin: 0px;
   font-size: 18px;
 }
-.info-result{
+.info-result {
   display: flex;
   margin-top: 10px;
   align-items: center;
   width: 300px;
   justify-content: space-between;
+}
+.message-error{
+  margin-bottom: 5px;
+  padding: 3px;
 }
 </style>

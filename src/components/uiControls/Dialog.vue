@@ -20,6 +20,7 @@
 
 <script>
 export default {
+  // types: error, succes, warning
   props: ['type','isActive', 'handler','message'],
   setup(props, context) {
       function runHandler(){

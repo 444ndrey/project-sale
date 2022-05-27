@@ -11,7 +11,7 @@
           :type="'agent'"
           @selectedItem="selectAgent"
         ></SelectBox>
-        <input v-model="datePicker" type="date" name="" id="" />
+        <input v-model="datePicker" class="datePicker" type="date" name="" id="" />
         <button class="btn2" @click="isProductAddWin = !isProductAddWin">
           Добавить позицию
         </button>
@@ -36,6 +36,7 @@
               <p class="list-item-text">
                 Всего: <b>&#8381;{{ item.sum }}</b>
               </p>
+              <button class="list-item-del" @click="delElement(item)">&#10006;</button>
             </div>
           </div>
         </div>
@@ -47,6 +48,7 @@
             maxlength="300"
             cols="30"
             rows="5"
+            placeholder="Комментарий к операции"
           ></textarea>
         </div>
         <div class="buttons">
@@ -96,6 +98,9 @@ export default {
       products.value.push(value);
       isProductAddWin.value = false;
     }
+    function delElement(el){
+        products.value = products.value.filter(p => p != el);
+    }
     onMounted(() => {
       ipcRenderer.send("get-all-agents");
       ipcRenderer.on("send-all-agents", (e, data) => {
@@ -121,6 +126,7 @@ export default {
       addProduct,
       products,
       sum,
+      delElement
     };
   },
   components: { SelectBox, SelectProductPurchase },
@@ -142,7 +148,7 @@ export default {
   gap: 20px;
 }
 .list-items {
-  height: 170px;
+  height: 130px;
   width: 100%;
   padding: 10px;
   overflow-y: scroll;
@@ -158,6 +164,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  height: 100%;
 }
 .btn2 {
   width: max-content;
@@ -194,7 +201,7 @@ export default {
   padding: 5px;
   color: var(--gray-secound);
   letter-spacing: 0.5px;
-  max-height: 70px;
+  height: 70px;
 }
 .comment:focus {
   border-color: var(--red-light);
@@ -215,8 +222,23 @@ export default {
   justify-content: flex-end;
   gap: 20px;
   align-items: center;
+  justify-self: flex-end;
+  margin-top: auto;
 }
 .title1{
-  margin-bottom: 10px;
+  margin-bottom: 5px;
+}
+.datePicker{
+  width: 150px;
+}
+.list-item-del{
+  margin-left: auto;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  transition: .3s ease-in-out;
+}
+.list-item-del:hover{
+  color:  var(--red);
 }
 </style>

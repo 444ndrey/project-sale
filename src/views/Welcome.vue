@@ -40,10 +40,10 @@ export default {
       if(hour >= 12 && hour < 18){
           res = "Добрый день!🌞"
       }
-      if(hour >= 18 && hour < 0){
+      if(hour >= 18 && hour < 24){
           res = "Добрый вечер!🌇"
       }
-      if(hour >= 0 && hour < 6){
+      if(hour >= 24 && hour < 6){
           res = "Доброй ночи!🌕"
       }
       return res;

@@ -90,6 +90,7 @@ import { computed, onMounted } from "@vue/runtime-core";
 import SelectBox from "../components/uiControls/SelectBox.vue";
 import { ipcRenderer } from "electron";
 import { ref } from "vue";
+import router from "../router";
 import SelectProductPurchase from "../components/SelectProductPurchase.vue";
 export default {
   setup() {
@@ -171,6 +172,9 @@ export default {
           products: productsToSend,
         };
         ipcRenderer.send("add-purchase", message);
+        ipcRenderer.on('succes-purchase',() => {
+          router.go(-1);
+        })
       }
     }
     onMounted(() => {

@@ -85,8 +85,23 @@ exports.addNewPurchase = purchase => {
         knex('PurchaseProduct').insert(products).then(res => {
             return res;
         });
-        //TODO: add entities update
-    });
+        products.forEach((item) => {
+            knex('Entity').where('product',item.product).andWhere('cost',item.cost).then(res => {
+                if(res.length > 0) {
+                    knex('Entity').where('product',item.product).andWhere('cost',item.cost).first().update({
+                        amount: res[0].amount + item.amount
+                    }).then(res => res)
+                }
+                else{
+                    knex('Entity').insert({
+                        product: item.product,
+                        cost: item.cost,
+                        amount: item.amount
+                    }).then(res => res);
+                }
+            })
+        });
+    })
 }
 
 

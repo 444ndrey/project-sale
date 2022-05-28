@@ -45,7 +45,9 @@ module.exports = {
             db.removeProductbyId(id);
         });
         ipcMain.on('add-purchase',(e,purchase) => {
-            let id = db.addNewPurchase(purchase);
+            db.addNewPurchase(purchase).then(
+                e.reply('succes-purchase')
+            )
         });
         
     }

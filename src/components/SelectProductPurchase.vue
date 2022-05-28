@@ -14,6 +14,9 @@
     </div>
     <div class="info" v-if="product != null">
       <div class="fields">
+        <div>
+          
+        </div>
         <div class="field">
           <label class="field-label">Цена: </label>
           <InputPrice v-model:inputValue="price"></InputPrice>
@@ -29,10 +32,10 @@
             v-model="amount"
           />
         </div>
-      </div>
-      <div class="info-result">
+        <div class="info-result">
         <p class="sum">Сумма: &#8381;{{ sum }}</p>
         <button class="btn1" @click="addProduct">Добавить</button>
+      </div>
       </div>
     </div>
   </div>
@@ -113,8 +116,7 @@ export default {
   border-radius: 15px;
   width: 100%;
   padding: 10px;
-  min-height: 170px;
-  max-height: 200px;
+  height: 140px;
 }
 .info {
   display: flex;
@@ -144,7 +146,6 @@ export default {
 }
 .info-result {
   display: flex;
-  margin-top: 10px;
   align-items: center;
   width: 300px;
   justify-content: space-between;

@@ -43,7 +43,10 @@ module.exports = {
         });
         ipcMain.on('remove-product',(e,id) => {
             db.removeProductbyId(id);
-        })
+        });
+        ipcMain.on('add-purchase',(e,purchase) => {
+            let id = db.addNewPurchase(purchase);
+        });
         
     }
 }

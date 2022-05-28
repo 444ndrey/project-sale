@@ -5,27 +5,49 @@
         <h2 class="title1">Покупка</h2>
         <h2 class="title2">Операция №{{ opNumber }}</h2>
       </header>
+      <div class="message-error" v-if="error.isActive">
+        <ul>
+          <li v-for="item in error.messages" :key="item">{{ item }}</li>
+        </ul>
+      </div>
       <div class="field-items">
-        <SelectBox
-          :data="agents"
-          :type="'agent'"
-          @selectedItem="selectAgent"
-        ></SelectBox>
-        <input v-model="datePicker" class="datePicker" type="date" name="" id="" />
-        <button class="btn2" @click="isProductAddWin = !isProductAddWin">
-          Добавить позицию
-        </button>
-        <SelectProductPurchase
-          v-if="isProductAddWin"
-          @addProduct="addProduct"
-          class="selector"
-        ></SelectProductPurchase>
+        <div class="field-item">
+          <label for="">Контрагент:</label>
+          <SelectBox
+            :data="agents"
+            :type="'agent'"
+            @selectedItem="selectAgent"
+          ></SelectBox>
+        </div>
+        <div class="field-item">
+          <label for="">Дата покупки</label>
+          <input
+            v-model="datePicker"
+            class="datePicker"
+            type="date"
+            name=""
+            id=""
+          />
+        </div>
+        <div class="field-item">
+          <label for="">Товары к покупке:</label>
+          <div>
+            <button class="btn2" @click="isProductAddWin = !isProductAddWin">
+              Добавить позицию
+            </button>
+            <SelectProductPurchase
+              v-if="isProductAddWin"
+              @addProduct="addProduct"
+              class="selector"
+            ></SelectProductPurchase>
+          </div>
+        </div>
         <div class="list-items-wrap">
           <div class="list-items">
             <p class="list-empty" v-if="products.length == 0">Список пуст</p>
             <div class="list-item" v-for="item in products" :key="item">
               <p class="list-item-text">
-                {{ item.id }}) <b>{{ item.product.name }}</b>
+                <b>{{ item.product.name }}</b>
               </p>
               <div>
                 <p class="list-item-text">
@@ -36,7 +58,9 @@
               <p class="list-item-text">
                 Всего: <b>&#8381;{{ item.sum }}</b>
               </p>
-              <button class="list-item-del" @click="delElement(item)">&#10006;</button>
+              <button class="list-item-del" @click="delElement(item)">
+                &#10006;
+              </button>
             </div>
           </div>
         </div>
@@ -49,10 +73,11 @@
             cols="30"
             rows="5"
             placeholder="Комментарий к операции"
+            v-model="comment"
           ></textarea>
         </div>
         <div class="buttons">
-          <button class="btn1">Оформить</button>
+          <button class="btn1" @click="buy">Оформить</button>
           <button class="btn2" @click="$router.go(-1)">Назад</button>
         </div>
       </div>
@@ -68,8 +93,13 @@ import { ref } from "vue";
 import SelectProductPurchase from "../components/SelectProductPurchase.vue";
 export default {
   setup() {
+    let error = ref({
+      isActive: false,
+      messages: [],
+    });
     let opNumber = "add_this_operation_number";
     let price = ref(0);
+    let comment = ref("");
     let isProductAddWin = ref(false);
     let agents = ref(null);
     let sum = computed(() => {
@@ -88,18 +118,60 @@ export default {
     let datePicker = ref(new Date().toISOString().substr(0, 10));
     function selectAgent(agent) {
       selectedAgent = agent;
+      console.log(agent);
     }
     function addProduct(value) {
-      if (products.value.length == 0) {
-        value.id = 1;
-      } else {
-        value.id = products.value[products.value.length - 1].id + 1;
+      let samePos = 0;
+      console.log(value.product.id);
+      for (let i in products.value) {
+        if (
+          value.id == products.value[i].id &&
+          value.price == products.value[i].price
+        ) {
+          samePos++;
+          products.value[i].amount += value.amount;
+          products.value[i].sum += value.sum;
+          break;
+        }
       }
-      products.value.push(value);
+      if (samePos == 0) {
+        products.value.push(value);
+      }
+
       isProductAddWin.value = false;
     }
-    function delElement(el){
-        products.value = products.value.filter(p => p != el);
+    function delElement(el) {
+      products.value = products.value.filter((p) => p != el);
+    }
+    function buy() {
+      error.value.isActive = false;
+      error.value.messages = [];
+      let isValidDate = Date.parse(datePicker.value);
+      if (selectedAgent == null) {
+        error.value.messages.push("Вы должны указать контрагента");
+      }
+      if (products.value.length == 0) {
+        error.value.messages.push("Список товаров не может быть пустым");
+      }
+      if (isNaN(isValidDate)) {
+        error.value.messages.push("Дата указана некорректно");
+      }
+
+      if (error.value.messages.length > 0) {
+        error.value.isActive = true;
+      } else {
+        let productsToSend = products.value.map((item) => {
+          return { id: item.product.id, price: item.price, amount: item.amount };
+        });
+        console.log(productsToSend);
+        let message = {
+          date: datePicker.value,
+          agent: selectedAgent.id,
+          comment: comment.value,
+          products: productsToSend,
+        };
+        ipcRenderer.send("add-purchase", message);
+      }
     }
     onMounted(() => {
       ipcRenderer.send("get-all-agents");
@@ -126,7 +198,10 @@ export default {
       addProduct,
       products,
       sum,
-      delElement
+      delElement,
+      buy,
+      error,
+      comment,
     };
   },
   components: { SelectBox, SelectProductPurchase },
@@ -198,10 +273,11 @@ export default {
   width: 100%;
   border-radius: 10px;
   border-color: var(--gray-main);
-  padding: 5px;
+  padding: 7px;
   color: var(--gray-secound);
   letter-spacing: 0.5px;
   height: 70px;
+  transition: .2s ease-in-out;
 }
 .comment:focus {
   border-color: var(--red-light);
@@ -225,20 +301,23 @@ export default {
   justify-self: flex-end;
   margin-top: auto;
 }
-.title1{
+.title1 {
   margin-bottom: 5px;
 }
-.datePicker{
+.datePicker {
   width: 150px;
 }
-.list-item-del{
+.list-item-del {
   margin-left: auto;
   cursor: pointer;
   background-color: transparent;
   border: none;
-  transition: .3s ease-in-out;
+  transition: 0.3s ease-in-out;
 }
-.list-item-del:hover{
-  color:  var(--red);
+.list-item-del:hover {
+  color: var(--red);
+}
+.message-error {
+  padding: 1px;
 }
 </style>

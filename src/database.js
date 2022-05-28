@@ -11,10 +11,10 @@ exports.getAgents = () => {
     return knex.select().from('Agent');
 }
 exports.getAgentbyId = id => {
-    return knex.select().from('Agent').where('id',id).first();
+    return knex.select().from('Agent').where('id', id).first();
 }
 exports.addAgent = agent => {
-        knex.insert({
+    knex.insert({
         inn: agent.inn,
         kpp: agent.kpp,
         name: agent.name,
@@ -24,10 +24,10 @@ exports.addAgent = agent => {
     }).into('Agent').then((res) => res);
 }
 exports.removeAgentbyId = id => {
-    return knex('Agent').where('id',id).del().then((res) => res);
+    return knex('Agent').where('id', id).del().then((res) => res);
 }
 exports.edtAgent = agent => {
-    knex('Agent').where('id',agent.id).update({
+    knex('Agent').where('id', agent.id).update({
         inn: agent.inn,
         kpp: agent.kpp,
         name: agent.name,
@@ -41,13 +41,13 @@ exports.getProducts = () => {
     return result;
 };
 exports.getEntities = id => {
-    return knex.select().from('Entity').where('product',id);
+    return knex.select().from('Entity').where('product', id);
 };
 exports.getProductbyId = id => {
-    return knex.select().from('Product').where('id',id).first();
+    return knex.select().from('Product').where('id', id).first();
 };
 exports.saveChanges = product => {
-    knex('Product').where('id',product.id).update({
+    knex('Product').where('id', product.id).update({
         code: product.code,
         price: product.price,
         unit: product.unit,
@@ -65,8 +65,30 @@ exports.addProduct = product => {
     }).into('Product').then(res => res);
 }
 exports.removeProductbyId = id => {
-    return knex('Product').where('id',id).del().then((res) => res);
+    return knex('Product').where('id', id).del().then((res) => res);
 }
+exports.addNewPurchase = purchase => {
+    return knex.insert({
+        date: purchase.date,
+        agent: purchase.agent,
+        comment: purchase.comment
+    }).returning('id').into('Purchase').then(el => {
+        let id = el[0].id;
+        let products = purchase.products.map(item => {
+            return {
+                purchase: id,
+                product: item.id,
+                amount: item.amount,
+                cost: item.price
+            };
+        });
+        knex('PurchaseProduct').insert(products).then(res => {
+            return res;
+        });
+        //TODO: add entities update
+    });
+}
+
 
 
 

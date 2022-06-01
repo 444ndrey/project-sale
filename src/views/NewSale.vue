@@ -2,7 +2,7 @@
   <div>
     <div class="control-win container">
       <header class="head">
-        <h2 class="title1">Покупка</h2>
+        <h2 class="title1">Продажа</h2>
       </header>
       <div class="message-error" v-if="error.isActive">
         <ul>
@@ -34,11 +34,11 @@
             <button class="btn2" @click="isProductAddWin = !isProductAddWin">
               Добавить позицию
             </button>
-            <SelectProductPurchase
+            <SelectProductSale
               v-if="isProductAddWin"
               @addProduct="addProduct"
               class="selector"
-            ></SelectProductPurchase>
+            ></SelectProductSale>
           </div>
         </div>
         <div class="list-items-wrap">
@@ -50,7 +50,7 @@
               </p>
               <div>
                 <p class="list-item-text">
-                  Покупаем <b>{{ item.amount }} {{ item.product.unit }}</b> по
+                  Продаем <b>{{ item.amount }} {{ item.product.unit }}</b> по
                   <b>&#8381;{{ item.price }}</b>
                 </p>
               </div>
@@ -90,7 +90,7 @@ import SelectBox from "../components/uiControls/SelectBox.vue";
 import { ipcRenderer } from "electron";
 import { ref } from "vue";
 import router from "../router";
-import SelectProductPurchase from "../components/SelectProductPurchase.vue";
+import SelectProductSale from "../components/SelectProductSale.vue";
 export default {
   setup() {
     let error = ref({
@@ -205,7 +205,7 @@ export default {
       comment,
     };
   },
-  components: { SelectBox, SelectProductPurchase },
+  components: { SelectBox, SelectProductSale },
 };
 </script>
 

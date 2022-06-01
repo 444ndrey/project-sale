@@ -1,7 +1,8 @@
 <template>
   <div class="wrapper">
     <div class="control-win container">
-      <p class="title1">{{message}}</p>
+        <!-- <img src="../assets/icons/logo.svg" draggable="false" /> -->
+        <p class="title1">{{ message }}</p>
       <nav class="nav">
         <p class="title2">Разделы:</p>
         <ul class="nav__items">
@@ -34,21 +35,21 @@ export default {
       const time = new Date();
       const hour = time.getHours();
       let res = "Доброй ночи!🌕 ";
-      if(hour < 12 && hour >= 6){
-          res = 'Доброе утро!🌅'
+      if (hour < 12 && hour >= 6) {
+        res = "Доброе утро!🌅";
       }
-      if(hour >= 12 && hour < 18){
-          res = "Добрый день!🌞"
+      if (hour >= 12 && hour < 18) {
+        res = "Добрый день!🌞";
       }
-      if(hour >= 18 && hour < 24){
-          res = "Добрый вечер!🌇"
+      if (hour >= 18 && hour < 24) {
+        res = "Добрый вечер!🌇";
       }
-      if(hour >= 24 && hour < 6){
-          res = "Доброй ночи!🌕"
+      if (hour >= 24 && hour < 6) {
+        res = "Доброй ночи!🌕";
       }
       return res;
     }
-    return {message};
+    return { message };
   },
 };
 </script>
@@ -62,6 +63,7 @@ export default {
 .title1 {
   text-align: center;
   font-size: 32px;
+  margin: 0;
 }
 .nav__items {
   display: flex;

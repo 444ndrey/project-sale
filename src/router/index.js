@@ -10,6 +10,7 @@ import NewProduct from '../views/NewProduct.vue';
 import ProdctInfo from '../views/ProductInfo.vue';
 import Welcome  from '../views/Welcome.vue';
 import NewPurchase from '../views/NewPurchase.vue';
+import NewSale from '../views/NewSale.vue';
 
 //#endregion
 const routes = [
@@ -62,7 +63,12 @@ const routes = [
     path: '/newpurchase',
     name: 'NewPurchase',
     component: NewPurchase
-  }
+  },
+  {
+    path: '/newsale',
+    name: 'NewSale',
+    component: NewSale
+  },
 
 ]
 

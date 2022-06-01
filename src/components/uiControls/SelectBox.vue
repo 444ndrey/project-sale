@@ -4,6 +4,7 @@
     tabindex="0"
     ref="selectBox"
     @keydown.esc="isActive = false"
+    @focusout="closeByLostFocus"
   >
     <div
       class="selectbox-title"
@@ -15,6 +16,7 @@
     </div>
     <div class="selectbox-content" v-if="isActive">
       <input
+        v-if="!isHideSearch"
         type="text"
         class="selectbox-search"
         v-model="searchValue"
@@ -31,6 +33,7 @@
         >
           {{ item.name }}
         </div>
+        <p v-if="filtredItems.length == 0">Кажется здесь пусто ;(</p>
       </div>
     </div>
   </div>
@@ -39,7 +42,14 @@
 <script>
 import { ref, computed } from "vue";
 export default {
-  props: ["data", "type"],
+  props: {
+    data: {},
+    type: {},
+    isHideSearch: {
+      type: Boolean,
+      default: false,
+    },
+  },
   emits: ["selectedItem"],
   setup(props, ctx) {
     let items = ref(props.data);
@@ -58,6 +68,11 @@ export default {
       ctx.emit("selectedItem", selected.value);
       selectBox.value.focus();
       isActive.value = !isActive.value;
+    }
+    function closeByLostFocus(e){
+        if(!e.currentTarget.contains(e.relatedTarget)){
+          isActive.value = false;
+        }
     }
     let filtredItems = computed(() => {
       if (searchValue.value.length > 0) {
@@ -81,7 +96,6 @@ export default {
                 item.code.includes(searchValue.value)
             );
             break;
-
           default:
             result = props.data.filter((item) =>
               item.name
@@ -90,7 +104,7 @@ export default {
             );
             break;
         }
-         return result;
+        return result;
       }
       return props.data;
     });
@@ -103,6 +117,7 @@ export default {
       selectBox,
       selected,
       select,
+      closeByLostFocus
     };
   },
 };

@@ -61,22 +61,25 @@
                 fill="#969696"
               /></svg
           ></router-link>
+          <!-- <img class="logo" src="./assets/icons/logo.svg" draggable="false" /> -->
         </nav>
       </div>
     </div>
-      <router-view class="view"></router-view>
+    <router-view class="view"></router-view>
   </div>
 </template>
 
 <script>
 export default {
-  setup() {
-    
-  },
+  setup() {},
 };
 </script>
 
 <style>
+.logo {
+  height: 35px;
+  margin-left: auto;
+}
 .header {
   width: 100%;
   background-color: #fff;
@@ -108,8 +111,8 @@ export default {
   fill: var(--red);
 }
 .router-link-active > .navbar-icon {
-  -webkit-filter: drop-shadow( 2px 2px 2px rgba(0, 0, 0, 0.2));
-  filter: drop-shadow( 2px 2px 2px rgba(0, 0, 0, 0.2));
+  -webkit-filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
   transform: scale(1.1);
 }
 .view {

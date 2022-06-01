@@ -9,8 +9,8 @@
           placeholder="Поиск по агенту, товару, договору"
           maxlength="30"
         />
-        <button class="btn1" >&#8650; Оформить продажу</button>
-        <button class="btn1 btn-bought" @click="$router.push('NewPurchase')">&#8648; Оформить покупку</button>
+        <button class="btn1" @click="$router.push('NewSale')">&#8650; Оформить продажу</button>
+        <button class="btn1" @click="$router.push('NewPurchase')">&#8648; Оформить покупку</button>
       </div>
       <TheOperationsHistory :operations="operations" :agents="agents"></TheOperationsHistory>
     </div>

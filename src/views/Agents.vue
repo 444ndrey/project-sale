@@ -8,7 +8,7 @@
       @update="updateList()"
     ></Dialog>
     <div class="control-win container">
-      <h2 class="tilte1">Контрагенты</h2>
+      <h2 class="title1">Контрагенты</h2>
       <div class="win__panel">
         <input
           class="control-search1"

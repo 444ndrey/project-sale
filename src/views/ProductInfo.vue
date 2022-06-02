@@ -73,8 +73,7 @@ export default {
     }
     function setupItems() {
       ipcRenderer.invoke("get-enities", route.query.id).then((res) => {
-        items.value = res;
-        console.log(items.value);
+        items.value = res.filter(i => i.amount > 0)
       });
     }
     function delProduct() {

@@ -29,6 +29,31 @@
           />
         </div>
         <div class="field-item">
+          <label for="">Дата оплаты</label>
+          <div class="cb">
+            <input
+              v-model="payday"
+              class="datePicker"
+              type="date"
+              name=""
+              id=""
+              :disabled="isNotPayday"
+            />
+            <label for="nopayday">Нет</label>
+            <input v-model="isNotPayday" type="checkbox" id="nopayday" />
+          </div>
+        </div>
+        <div class="field-item">
+          <label for="">Номер договора</label>
+          <input
+            v-model="contract"
+            class="control-input"
+            type="text"
+            maxlength="50"
+            placeholder="Договор"
+          />
+        </div>
+        <div class="field-item">
           <label for="">Товары к покупке:</label>
           <div>
             <button class="btn2" @click="isProductAddWin = !isProductAddWin">
@@ -51,7 +76,7 @@
               <div>
                 <p class="list-item-text">
                   Продаем <b>{{ item.amount }} {{ item.product.unit }}</b> по
-                  <b>&#8381;{{ item.price }}</b>
+                  <b>&#8381;{{ item.product.price }}</b>
                 </p>
               </div>
               <p class="list-item-text">
@@ -76,7 +101,7 @@
           ></textarea>
         </div>
         <div class="buttons">
-          <button class="btn1" @click="buy">Оформить</button>
+          <button class="btn1" @click="sale">Оформить</button>
           <button class="btn2" @click="$router.go(-1)">Назад</button>
         </div>
       </div>
@@ -97,10 +122,13 @@ export default {
       isActive: false,
       messages: [],
     });
+    let isNotPayday = ref(false);
     let price = ref(0);
     let comment = ref("");
     let isProductAddWin = ref(false);
     let agents = ref(null);
+    let contract = ref("");
+    let payday = ref(new Date().toISOString().substr(0, 10));
     let sum = computed(() => {
       if (products.value.length != 0) {
         let value = 0;
@@ -117,32 +145,26 @@ export default {
     let datePicker = ref(new Date().toISOString().substr(0, 10));
     function selectAgent(agent) {
       selectedAgent = agent;
-      console.log(agent);
     }
     function addProduct(value) {
-      let samePos = 0;
-      console.log(value.product.id);
-      for (let i in products.value) {
-        if (
-          value.id == products.value[i].id &&
-          value.price == products.value[i].price
-        ) {
-          samePos++;
-          products.value[i].amount += value.amount;
-          products.value[i].sum += value.sum;
-          break;
-        }
+      let duplicates = products.value.filter(
+        (item) =>
+          item.entity == value.entity && item.product.id == value.product.id
+      );
+      if (duplicates.length > 0) {
+        products.value = products.value.filter(
+          (item) =>
+            item.entity != value.entity && item.product.id != value.product.id
+        );
       }
-      if (samePos == 0) {
-        products.value.push(value);
-      }
-
+      products.value.push(value);
+      console.log(value);
       isProductAddWin.value = false;
     }
     function delElement(el) {
       products.value = products.value.filter((p) => p != el);
     }
-    function buy() {
+    function sale() {
       error.value.isActive = false;
       error.value.messages = [];
       let isValidDate = Date.parse(datePicker.value);
@@ -160,19 +182,24 @@ export default {
         error.value.isActive = true;
       } else {
         let productsToSend = products.value.map((item) => {
-          return { id: item.product.id, price: item.price, amount: item.amount };
+          return {
+            id: item.entity,
+            amount: item.amount,
+          };
         });
-        console.log(productsToSend);
-        let message = {
+        let sale = {
           date: datePicker.value,
           agent: selectedAgent.id,
+          contract: contract.value,
+          payday: isNotPayday.value == true ? null : payday.value,
           comment: comment.value,
           products: productsToSend,
         };
-        ipcRenderer.send("add-purchase", message);
-        ipcRenderer.on('succes-purchase',() => {
+        console.log(sale);
+        ipcRenderer.send("add-sale", sale);
+        ipcRenderer.on("succes-sale", () => {
           router.go(-1);
-        })
+        });
       }
     }
     onMounted(() => {
@@ -200,9 +227,12 @@ export default {
       products,
       sum,
       delElement,
-      buy,
+      sale,
       error,
       comment,
+      contract,
+      payday,
+      isNotPayday,
     };
   },
   components: { SelectBox, SelectProductSale },
@@ -239,11 +269,12 @@ export default {
 .field-items {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 7px;
   height: 100%;
 }
 .btn2 {
   width: max-content;
+  padding: 0px;
 }
 .list-empty {
   align-items: center;
@@ -278,7 +309,7 @@ export default {
   color: var(--gray-secound);
   letter-spacing: 0.5px;
   height: 70px;
-  transition: .2s ease-in-out;
+  transition: 0.2s ease-in-out;
 }
 .comment:focus {
   border-color: var(--red-light);
@@ -288,9 +319,11 @@ export default {
   display: flex;
   flex-direction: column;
   width: 100%;
+  padding: 2px 0;
 }
 .field-item > label {
   color: var(--gray-main);
+  margin: 0;
 }
 .buttons {
   margin-top: 10px;
@@ -307,6 +340,7 @@ export default {
 }
 .datePicker {
   width: 150px;
+  margin-bottom: 1px;
 }
 .list-item-del {
   margin-left: auto;
@@ -320,5 +354,13 @@ export default {
 }
 .message-error {
   padding: 1px;
+}
+.cb {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.datePicker:disabled {
+  background-color: #eeee;
 }
 </style>

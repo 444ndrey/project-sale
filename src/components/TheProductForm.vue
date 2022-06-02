@@ -49,7 +49,7 @@
   <div class="params">
     <p class="field__item-label">Дополнительные параметры:</p>
     <div class="params__table">
-      <h4 class="title2">Извините, но доп.парметры пока не доступны</h4>
+      <h4 class="title2">Извините, но доп.парметры пока недоступны.</h4>
     </div>
   </div>
 </template>

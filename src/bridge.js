@@ -49,6 +49,11 @@ module.exports = {
                 e.reply('succes-purchase')
             )
         });
+        ipcMain.on('add-sale', (e,sale) => {
+            db.addNewSale(sale).then(() => {
+                e.reply('succes-sale');
+            })
+        })
         
     }
 }

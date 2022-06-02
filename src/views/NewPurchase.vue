@@ -162,7 +162,6 @@ export default {
         let productsToSend = products.value.map((item) => {
           return { id: item.product.id, price: item.price, amount: item.amount };
         });
-        console.log(productsToSend);
         let message = {
           date: datePicker.value,
           agent: selectedAgent.id,

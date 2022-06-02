@@ -10,6 +10,7 @@ button{
 * {
     box-sizing: border-box;
     font-family: Calibri;
+    font-weight: 400;
 }
 
 /* datepicker */
@@ -26,6 +27,10 @@ input[type=date]{
 }
 input[type=date]::-webkit-datetime-edit {
     color: var(--gray-secound);
+}
+input:disabled{
+    background-color: #eeee;
+    border-radius: 5px;
 }
 
 

@@ -130,6 +130,12 @@ exports.addNewSale = sale => {
         });
     })
 }
+exports.getAllSales = () => {
+    return knex.select().from('Sale');
+}
+exports.getAllPurchases = () => {
+    return knex.select().from('Purchase');
+}
 
 
 

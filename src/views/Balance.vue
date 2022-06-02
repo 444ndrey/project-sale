@@ -6,57 +6,121 @@
         <input
           type="text"
           class="control-search1"
-          placeholder="Поиск по агенту, товару, договору"
+          placeholder="Поиск по агенту"
           maxlength="30"
+          v-model="searchValue"
         />
-        <button class="btn1" @click="$router.push('NewSale')">&#8650; Оформить продажу</button>
-        <button class="btn1" @click="$router.push('NewPurchase')">&#8648; Оформить покупку</button>
+        <button class="btn1" @click="$router.push('NewSale')">
+          &#8650; Оформить продажу
+        </button>
+        <button class="btn1" @click="$router.push('NewPurchase')">
+          &#8648; Оформить покупку
+        </button>
       </div>
-      <TheOperationsHistory :operations="operations" :agents="agents"></TheOperationsHistory>
+        <TheOperationsHistory
+          :operations="searchResult"
+          :agents="agents"
+          @sort-date="sortByDate"
+        ></TheOperationsHistory>
     </div>
   </div>
 </template>
 
 <script>
-import { ref } from '@vue/reactivity';
+import { ref } from "@vue/reactivity";
 import TheOperationsHistory from "../components/TheOperationsHistory.vue";
+import { computed, onMounted } from "@vue/runtime-core";
+import { ipcRenderer } from "electron";
 export default {
   components: { TheOperationsHistory },
   setup() {
-    const purchase = [
-      { id: 0, agent: 0, sum: 13000, date: '09.04.2022' },
-      { id: 1, agent: 0, sum: 17000, date: '08.04.2022'},
-      { id: 1, agent: 1, sum: 17000, date: '08.04.2022' },
-    ].map(a => ({...a, type: 'buy'}));
-    const sale = [
-      { id: 0, agent: 0, sum: 13000, date: '30.03.2022' },
-    ].map(a => ({...a, type: 'sale'}));
-    const operations = purchase.concat(sale);
-    const agents = [
-      {
-        id: 0,
-        name: 'ооо"Магазин"',
-        inn: "141131510365",
-        address: "г.Москва ул.Улчиная д.17",
-        phone: "8 123 4567089",
-      },
-      {
-        id: 1,
-        name: "ИП Иванов",
-        inn: "757040423077",
-        address: "г.Москва ул.Другая 18",
-        phone: "8 123 4567089",
-      },
-      {
-        id: 2,
-        name: 'оао "ИДЕЯ"',
-        inn: "621883385834",
-        address: "г.Ярославль ул.Ярославская д.9",
-        phone: "8 123 4567089",
-      },
-    ]
+    let purchase = [];
+    let sales = [];
+    let agents = ref([]);
+    let sorting = ref({
+      isFirstLast: false,
+    });
+    const operations = ref([]);
+    let searchValue = ref("");
+    let searchResult = computed(() => {
+      let result;
+      if (searchValue.value.length > 0) {
+        let agentRes = agents.value.filter((item) =>
+          item.name.toLowerCase().includes(searchValue.value.toLowerCase())
+        );
+        result = operations.value.filter((item) => {
+          for (let j of agentRes) {
+            if (item.agent == j.id) {
+              return true;
+            }
+          }
+        });
+      } else {
+        result = operations.value;
+      }
+      console.log(result);
+      return result;
+    });
+    function setOperations() {
+      sales = sales.map((item) => {
+        item.type = "sale";
+        return item;
+      });
+      purchase = purchase.map((item) => {
+        item.type = "buy";
+        return item;
+      });
+      operations.value = purchase.concat(sales);
+      sortByDate();
+    }
+    function sortByDate() {
+      sorting.value.isFirstLast = !sorting.value.isFirstLast;
+      if (sorting.value.isFirstLast) {
+        return operations.value.sort((a, b) => {
+          let aDate = new Date(a.date);
+          let bDate = new Date(b.date);
+          return +bDate - +aDate;
+        });
+      } else {
+        return operations.value.sort((a, b) => {
+          let aDate = new Date(a.date);
+          let bDate = new Date(b.date);
+          return +aDate - +bDate;
+        });
+      }
+    }
+    onMounted(() => {
+      ipcRenderer.send("get-all-agents");
+      ipcRenderer.on("send-all-agents", (e, data) => {
+        agents.value = data;
+        return ipcRenderer
+          .invoke("get-all-sales")
+          .then((result) => {
+            sales = result;
+            return;
+          })
+          .then(() => {
+            return ipcRenderer
+              .invoke("get-all-purchases")
+              .then((result) => {
+                purchase = result;
+              })
+              .then(() => {
+                setOperations();
+                return;
+              });
+          });
+      });
+    });
 
-    return {operations,agents}
+    return {
+      agents,
+      operations,
+      sortByDate,
+      sorting,
+      searchValue,
+      searchResult,
+    };
   },
 };
 </script>

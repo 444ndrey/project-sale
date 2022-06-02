@@ -4,16 +4,20 @@
       <th class="table-header">Тип операции</th>
       <th class="table-header">Контрагент</th>
       <th class="table-header">Сумма</th>
-      <th class="table-header">Дата</th>
+      <th class="table-header sortable" @click="$emit('sort-date')">Дата</th>
       <th class="table-header">Подробнее</th>
       <tr class="table-row" v-for="item in ops" :key="item.id">
         <td class="table-value">
-            <div class="table-type table-type-buy" v-if="item.type == 'sale'">Продажа</div>
-            <div class="table-type table-type-sale" v-else>Закупка</div>
+          <div class="table-type table-type-buy" v-if="item.type == 'sale'">
+            Продажа
+          </div>
+          <div class="table-type table-type-sale" v-else>Закупка</div>
         </td>
         <td class="table-value">{{ item.agent.name }}</td>
-        <td class="table-value" :class="{'negative' : item.sum < 0}">{{ item.sum }}&#8381;</td>
-        <td class="table-value">{{ item.date }}</td>
+        <td class="table-value" :class="{ negative: item.sum < 0 }">
+          sum&#8381;
+        </td>
+        <td class="table-value">{{ item.date.split('-').reverse().join('.') }}</td>
         <td class="table-value"></td>
       </tr>
     </table>
@@ -21,20 +25,20 @@
 </template>
 
 <script>
-import { reactive } from "@vue/reactivity";
+import { computed, ref } from "@vue/runtime-core";
 export default {
   props: ["operations", "agents"],
   setup(props) {
-    const ops = props.operations.map((item) => {
-      return {
-        id: item.id,
-        agent: props.agents.find((a) => a.id == item.agent),
-        sum: item.type == 'buy' ? item.sum * -1 : item.sum,
-        date: item.date,
-        type: item.type,
-      };
+    const ops = computed(() => {
+      return props.operations.map((item) => {
+        return {
+          id: item.id,
+          agent: props.agents.find((a) => a.id == item.agent),
+          date: item.date,
+          type: item.type,
+        };
+      });
     });
-    console.log(ops);
     return { ops };
   },
 };
@@ -42,7 +46,7 @@ export default {
 
 <style scoped>
 .wrapper {
-  margin-top: 100px;
+  margin-top: 50px;
   width: 100%;
 }
 .table {
@@ -60,8 +64,8 @@ export default {
 .table-row:hover {
   background-color: #eeee;
 }
-.table-row > td:first-child{
-    width: 100px;
+.table-row > td:first-child {
+  width: 100px;
 }
 .table-value {
   text-align: center;
@@ -73,20 +77,27 @@ export default {
   background-color: var(--red-light);
   color: white;
 }
-.table-type{
-    height: 20px;
-    border-radius: 20px;
-    color: #fff;
-    user-select: none;
-    font-size: 16px;
+.table-type {
+  height: 20px;
+  border-radius: 20px;
+  color: #fff;
+  user-select: none;
+  font-size: 16px;
 }
-.table-type-sale{
-background-color: #d56262;
+.table-type-sale {
+  background-color: #d56262;
 }
 .table-type-buy {
-   background-color: #96d562;
+  background-color: #96d562;
 }
-.negative{
-    color: #d56262;
+.negative {
+  color: #d56262;
+}
+.sortable{
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+}
+.sortable:hover{
+  color: var(--gray-secound);
 }
 </style>

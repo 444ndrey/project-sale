@@ -53,6 +53,12 @@ module.exports = {
             db.addNewSale(sale).then(() => {
                 e.reply('succes-sale');
             })
+        });
+        ipcMain.handle('get-all-sales', (e) => {
+            return db.getAllSales();
+        });
+        ipcMain.handle('get-all-purchases', (e) => {
+            return db.getAllPurchases();
         })
         
     }

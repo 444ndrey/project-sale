@@ -4,7 +4,7 @@ const knex = require('knex').knex({
         filename: './database.sqlite'
     },
     useNullAsDefault: true
-})
+});
 
 //      DATABASE fetch methods
 exports.getAgents = () => {

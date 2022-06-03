@@ -14,8 +14,8 @@
           <div class="table-type table-type-sale" v-else>Закупка</div>
         </td>
         <td class="table-value">{{ item.agent.name }}</td>
-        <td class="table-value" :class="{ negative: item.sum < 0 }">
-          sum&#8381;
+        <td class="table-value placeholder-text" :class="{ negative: item.sum < 0 }">
+          placeholder
         </td>
         <td class="table-value">{{ item.date.split('-').reverse().join('.') }}</td>
         <td class="table-value"></td>

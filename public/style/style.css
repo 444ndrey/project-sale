@@ -203,11 +203,6 @@ router-link {
     color: #c82ec8;
     font-style: italic;
 }
-@media screen and (max-width: 1600px) {
-    .container {
-        width: 1300px;
-    }
-}
 /*rang*/
 input[type=range] {
     height: 20px;
@@ -303,7 +298,11 @@ input[type=range] {
 
 
 
-
+  @media screen and (max-width: 1600px) {
+    .container {
+        width: 1300px;
+    }
+}
 
 @media screen and (max-width: 1300px) {
     .container {

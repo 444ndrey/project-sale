@@ -18,8 +18,8 @@
           <il class="nav__item">
             <router-link to="/stat">Статистика</router-link>
           </il>
-          <il class="nav__item link-disabled">
-            <router-link to="/">Параметры</router-link>
+          <il class="nav__item ">
+            <router-link to="/settings">Параметры</router-link>
           </il>
         </ul>
       </nav>

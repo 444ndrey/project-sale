@@ -59,7 +59,13 @@ module.exports = {
         });
         ipcMain.handle('get-all-purchases', (e) => {
             return db.getAllPurchases();
-        })
+        });
+        ipcMain.handle('get-password', e => {
+            return db.getPassword();
+        });
+        ipcMain.on('save-passwrod', (e,pass) => {
+            db.savePassword(pass);
+        });
         
     }
 }

@@ -11,6 +11,7 @@ import ProdctInfo from '../views/ProductInfo.vue';
 import Welcome  from '../views/Welcome.vue';
 import NewPurchase from '../views/NewPurchase.vue';
 import NewSale from '../views/NewSale.vue';
+import Settings  from '../views/Settings.vue';
 
 //#endregion
 const routes = [
@@ -69,6 +70,11 @@ const routes = [
     name: 'NewSale',
     component: NewSale
   },
+  {
+    path: '/settings',
+    name: 'Settings',
+    component: Settings
+  }
 
 ]
 

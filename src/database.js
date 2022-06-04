@@ -136,7 +136,36 @@ exports.getAllSales = () => {
 exports.getAllPurchases = () => {
     return knex.select().from('Purchase');
 }
+exports.getPassword = () => {
+    return knex.select().from('Password').then(res => {
+        if (res.length == 0) {
+            return {password: ''};
 
+        }
+        else {
+            return res[0];
+        }
+    }).then(res => res.password);
+}
+exports.savePassword = (pass) => {
+    knex.select().from('Password').then(res => {
+        if (res.length == 0 && (pass != null && pass != '')) {
+            knex('Password').insert({
+                password: pass
+            }).then(res => res);
+        }
+        else {
+            if (pass == null || pass == '') {
+                knex.select().from('Password').first().del().then(res => res);
+            }
+            else {
+                knex.select().from('Password').first().update({
+                    password: pass
+                }).then(res => res);
+            }
+        }
+    }).then(res => res);
+}
 
 
 

@@ -149,10 +149,11 @@ export default {
           value: "Не все обязательные поля были заполнены",
         });
       }
-      if (agent.value.inn.length < 10 && agent.value.inn.length != 0) {
+      if (agent.value.inn.length == 10 || agent.value.inn.length == 12){}
+      else{
         error.value.messages.push({ value: "ИНН указан некорректно" });
       }
-      if (agent.value.kpp.length < 9 && agent.value.kpp.length != 0) {
+      if (agent.value.kpp.length != 9) {
         error.value.messages.push({ value: "КПП указан некорректно" });
       }
       if (error.value.messages.length != 0) {

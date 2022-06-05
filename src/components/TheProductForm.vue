@@ -32,7 +32,8 @@
           class="control-input"
           maxlength="4"
           placeholder="Ед.измерения"
-          v-model="product.unit"/>
+          v-model="product.unit"
+        />
       </div>
     </div>
     <div class="filed__item">
@@ -42,8 +43,19 @@
     <div class="filed__item filed__item-short">
       <p class="field__item-label field__item-necessary">НДС:</p>
       <div class="filed__item-input">
-        <input type="number" v-model="product.nds" @focusout="fixNds" @keypress="fixNdsLength" class="control-input">
+        <input
+          type="number"
+          v-model="product.nds"
+          @focusout="fixNds"
+          @keypress="fixNdsLength"
+          class="control-input"
+        />
       </div>
+    </div>
+    <div class="filed__item">
+      <p class="field__item-label field__item-necessary">
+        Цена за единицу c учетом НДС: {{ sum }}&#8381;
+      </p>
     </div>
   </div>
   <div class="params">
@@ -55,23 +67,33 @@
 </template>
 
 <script>
+import { computed } from "@vue/runtime-core";
 import InputPrice from "./uiControls/InputPrice.vue";
 export default {
-    props: ["product"],
-    setup(props) {
-      function fixNdsLength(e){
-          if(e.target.value.toString().length >= 3){
-            e.preventDefault();
-          }
+  props: ["product"],
+  setup(props) {
+    let sum = computed(() => {
+      let res = (props.product.nds / 100) * parseFloat(props.product.price) + parseFloat(props.product.price);
+      if(typeof res !== 'number' || isNaN(res)){
+        return 0;
+      }else{
+        return res.toFixed(2);
       }
-      function fixNds(e){
-          if(e.target.value > 100){
-              e.target.value = 100;
-          }
+    });
+    function fixNdsLength(e) {
+      if (e.target.value.toString().length >= 3) {
+        e.preventDefault();
       }
-        return {fixNdsLength,fixNds};
-    },
-    components: { InputPrice }
+    }
+    function fixNds(e) {
+      if (e.target.value > 100) {
+        e.target.value = 100;
+        props.product.nds = 100;
+      }
+    }
+    return { fixNdsLength, fixNds, sum };
+  },
+  components: { InputPrice },
 };
 </script>
 
@@ -119,7 +141,7 @@ export default {
 .price-input {
   padding-left: 20px;
 }
-.price span{
+.price span {
   position: absolute;
   margin-left: 5px;
   color: var(--gray-main);
@@ -127,17 +149,17 @@ export default {
   padding-bottom: 3px;
   user-select: none;
 }
-.params{
+.params {
   margin-bottom: 30px;
 }
-.filed__item-short{
+.filed__item-short {
   max-width: 150px;
 }
-.filed__item-input{
+.filed__item-input {
   display: flex;
 }
-.filed__item-input::after{
-  content: '%';
+.filed__item-input::after {
+  content: "%";
   color: var(--gray-main);
   font-size: 20px;
 }

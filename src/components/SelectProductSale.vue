@@ -109,6 +109,7 @@ export default {
             code: item.code,
             price: parseFloat(item.price).toFixed(2),
             unit: item.unit,
+            nds: item.nds
           };
         });
       });

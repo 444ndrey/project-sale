@@ -12,6 +12,8 @@ import Welcome  from '../views/Welcome.vue';
 import NewPurchase from '../views/NewPurchase.vue';
 import NewSale from '../views/NewSale.vue';
 import Settings  from '../views/Settings.vue';
+import Lock from '../views/Lock.vue';
+import store from '../store';
 
 //#endregion
 const routes = [
@@ -56,7 +58,7 @@ const routes = [
     component: ProdctInfo
   },
   {
-    path: '',
+    path: '/',
     name: 'Welcome',
     component: Welcome
   },
@@ -74,13 +76,25 @@ const routes = [
     path: '/settings',
     name: 'Settings',
     component: Settings
-  }
-
+  },
+  {
+    path: '/lock',
+    name: 'Lock',
+    component: Lock
+  },
 ]
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes
+});
+router.beforeEach((to,from,next) => {
+  console.log(store.state.auth.isLock)
+    if(store.state.auth.isLock == true && to.name != 'Lock'){
+      next({name:'Lock'})
+    }else{
+      next();
+    }
 })
 
 export default router

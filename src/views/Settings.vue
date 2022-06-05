@@ -44,7 +44,7 @@ export default {
     function save() {
       savePassword();
       message.value.isActive = true;
-      let timer = setTimeout(() => {
+      setTimeout(() => {
         message.value.isActive = false;
       }, 3000);
     }

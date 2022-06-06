@@ -9,6 +9,7 @@
           <h2 class="title1" v-else>
             Продажа №{{ $route.query.id }} от {{ dateString }}
           </h2>
+          <button class="btn1" v-if="$route.query.type == 'sale'" @click="print">Сформировать счет</button>
           <button class="btn2" @click="$router.go(-1)">Назад</button>
         </header>
         <div class="info-items">
@@ -54,7 +55,7 @@
                 </p>
               </div>
               <p class="list-item-text">
-                Всего: <b>&#8381;{{ getProductSum(item.amount, item.cost) }}</b>
+                Всего: <b>&#8381;{{ item.amount * item.cost }}</b>
               </p>
             </div>
           </div>
@@ -75,12 +76,13 @@
               </p>
               <div>
                 <p class="list-item-text">
-                  Покупаем <b>{{ item.amount }} {{ item.info.unit }}</b> по
+                  Продаем <b>{{ item.amount }} {{ item.info.unit }}</b> по
                   <b>&#8381;{{ item.info.price }}</b>
                 </p>
               </div>
               <p class="list-item-text">
-                Всего: <b>&#8381;{{ getProductSum(item.amount, item.info.price) }}</b>
+                Всего: <b>&#8381;{{item.amount * item.info.price}}</b>
+                 c учетом НДС {{item.info.nds}}%: <b>&#8381;{{getPriceWithNds(item.amount * item.info.price, item.info.nds)}}</b>
               </p>
             </div>
           </div>
@@ -93,11 +95,47 @@
           Сумма: &#8381;{{ getTotalSumSale(operation.products) }}
         </p>
       </div>
-      <div id="pdf">
-        <p>SOME BILL</p>
-        <button class="btn1" @click="print">Скачать</button>
+    <!-- BILL -->
+    <div v-show="false" class="container">
+      <div class="" ref="billEl" style="margin: 10px; padding-left: 50px;  font-family:Calibri; font-weight: 400;">
+        <div class="bill-header" style="padding-bottom:12px; border-bottom: 3px solid #000; margin: 20px 0; ">
+            <h2>Счет №{{$route.query.id}} от {{dateString}}</h2>
+            <div>
+              <p style="word-wrap: break-word;">Поставщик: - </p>
+            </div>
+            <div>
+              <p style="word-wrap: break-word;">Клиент: <b>{{operation.agent.name}}, ИНН: {{operation.agent.inn}},
+               КПП: {{operation.agent.kpp}}, адрес: {{operation.agent.address}}</b></p>
+            </div>
+        </div>
+        <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+          <th style="border: 2px solid; font-weight: bold">Товары</th>
+          <th style="border: 2px solid; font-weight: bold">Кол-во</th>
+          <th style="border: 2px solid; font-weight: bold">Ед</th>
+          <th style="border: 2px solid; font-weight: bold">Цена</th>
+          <th style="border: 2px solid; font-weight: bold">Сумма</th>
+          <th style="border: 2px solid; font-weight: bold">НДС</th>
+            <tr v-for="item in operation.products" :key="item">
+                <td style="border: 2px solid;">{{item.info.name}}</td>
+                <td style="border: 2px solid;">{{item.amount}}</td>
+                <td style="border: 2px solid;">{{item.info.unit}}</td>
+                <td style="border: 2px solid;">{{getPriceWithNds(item.info.price, item.info.nds)}}руб.</td>
+                <td style="border: 2px solid;">{{getPriceWithNds(item.info.price * item.amount, item.info.nds)}}руб.</td>
+                <td style="border: 2px solid;">{{item.info.nds}}% - {{getNdsFromPrice(item.info.price * item.amount, item.info.nds)}}руб.</td>
+            </tr>
+        </table>
+        <div style="display: flex;">
+        <h2>Итого: {{getTotalSumSale(operation.products)}} рублей</h2>
+        </div>
+
       </div>
     </div>
+
+
+    </div>
+
+    
+
   </div>
 </template>
 
@@ -107,6 +145,7 @@ import { useRoute } from "vue-router";
 import { ipcRenderer } from "electron";
 export default {
   setup() {
+    let billEl = ref(null)
     let route = useRoute();
     let dateString = computed(() => {
       let day =
@@ -118,6 +157,7 @@ export default {
       return `${day}.${month}.${operation.value.date.getFullYear()}`;
     });
     let operation = ref({
+      id: route.query.id,
       type: route.query.type,
       agent: { name: "", inn: "", kpp: "" },
       date: new Date(),
@@ -166,13 +206,14 @@ export default {
                 .invoke("get-product-by-entity", item.product)
                 .then((res) => {
                   item.info = res;
-                  console.log(res);
                 });
             });
           });
       });
     }
-
+    function getPriceWithNds(price,nds){
+      return  ((nds / 100) * parseFloat(price) + parseFloat(price)).toFixed(2)
+    }
     function getProductSum(amount, price) {
       return parseFloat(price * amount).toFixed(2);
     }
@@ -186,26 +227,29 @@ export default {
     function getTotalSumSale(arr) {
       let sum = 0;
       arr.forEach((item) => {
-        sum += parseFloat(getProductSum(item.amount, item.info.price));
+        sum += parseFloat(getProductSum(item.amount, getPriceWithNds(item.info.price,item.info.nds)));
       });
       return sum.toFixed(2);
     }
-
-    function print(){
-        ipcRenderer.send('save-bill');
+    function getNdsFromPrice(price,nds){
+     return parseFloat(price * (nds/100)).toFixed(2);
     }
 
+    function print(){
+      let html = billEl.value.outerHTML;
+      console.log(html)
+
+      ipcRenderer.send('save-bill',html)
+
+    }
     onMounted(() => {
       if (operation.value.type == "buy") {
         setPurchaseInfo();
       } else {
         setSaleInfo();
       }
-      setTimeout(() => {
-        console.log(operation.value);
-      }, 2300);
     });
-    return { operation, dateString, getProductSum, getTotalSumPurchase,getTotalSumSale, print };
+    return { operation, dateString, getProductSum, getTotalSumPurchase,getTotalSumSale, print,billEl,getPriceWithNds,getNdsFromPrice};
   },
 };
 </script>
@@ -291,4 +335,18 @@ header {
 .list-item:hover {
   background-color: #eeee;
 }
+
+/* BILL STYLES */
+
+.bill-header{
+  width: 100%;
+  padding-bottom: 10px;
+  border-bottom: 3px solid #0000;
+}
+
+
+
+
+
+
 </style>

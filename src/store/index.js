@@ -19,7 +19,6 @@ isPasswordExist();
 export default router
 function isPasswordExist(){
     ipcRenderer.invoke('get-password').then(res => {
-      console.log(res);
       if(res == ''){
         router.state.auth.isLock = false;
       }

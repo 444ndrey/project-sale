@@ -19,7 +19,7 @@
           ></SelectBox>
         </div>
         <div class="field-item">
-          <label for="">Дата покупки</label>
+          <label for="">Дата продажи:</label>
           <input
             v-model="datePicker"
             class="datePicker"
@@ -29,7 +29,7 @@
           />
         </div>
         <div class="field-item">
-          <label for="">Дата оплаты</label>
+          <label for="">Дата оплаты:</label>
           <div class="cb">
             <input
               v-model="payday"
@@ -44,7 +44,7 @@
           </div>
         </div>
         <div class="field-item">
-          <label for="">Номер договора</label>
+          <label for="">Номер договора:</label>
           <input
             v-model="contract"
             class="control-input"

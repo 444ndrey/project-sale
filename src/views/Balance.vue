@@ -58,7 +58,6 @@ export default {
       } else {
         result = operations.value;
       }
-      console.log(result);
       return result;
     });
     function setOperations() {

@@ -1,7 +1,7 @@
 <template>
   <div>
-      <div class="container">
-          <h2>Stat</h2>
+      <div class="control-win container">
+          <h2 class="title1">В разработке</h2>
       </div>
   </div>
 </template>

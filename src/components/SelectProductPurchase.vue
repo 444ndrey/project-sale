@@ -71,7 +71,7 @@ export default {
         products.value = res.map((item) => {
           return {
             id: item.id,
-            name: item.name,
+            name: `${item.name} - ${parseFloat(item.price).toFixed(2)} руб.`,
             code: item.code,
             price: parseFloat(item.price).toFixed(2),
             unit: item.unit,

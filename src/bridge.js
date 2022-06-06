@@ -66,6 +66,26 @@ module.exports = {
         ipcMain.on('save-passwrod', (e,pass) => {
             db.savePassword(pass);
         });
+        ipcMain.handle('get-purchase', (e,id) => {
+            return db.getPurchaseById(id);
+        });
+        ipcMain.handle('get-agent', (e,id) => {
+            return db.getAgentbyId(id);
+        });
+        ipcMain.handle('get-purchase-products',(e,id) => {
+            return db.getProductsbyPurchase(id);
+        });
+
+        ipcMain.handle('get-sale', (e,id) => {
+            return db.getSalebyId(id);
+        });
+        ipcMain.handle('get-sale-products',(e,id) => {
+            return db.getProductsbySale(id);
+        });
+        ipcMain.handle('get-product-by-entity',(e,id) => {
+            return db.getProductbyEntityId(id);
+        })
+
         
     }
 }

@@ -18,7 +18,7 @@
           placeholder
         </td>
         <td class="table-value">{{ item.date.split('-').reverse().join('.') }}</td>
-        <td class="table-value"></td>
+        <td class="table-value"><a @click.prevent="$router.push({name: 'OperationInfo', query: {id: item.id, type: item.type }})">открыть</a></td>
       </tr>
     </table>
   </div>
@@ -99,5 +99,15 @@ export default {
 }
 .sortable:hover{
   color: var(--gray-secound);
+}
+.table-value > a{
+  transition: .3s ease-in-out;
+  color: var(--gray-main);
+  cursor: pointer;
+  font-size: 16px;
+}
+.table-value:hover > a{
+  color: var(--gray-secound);
+  font-size: 17px;
 }
 </style>

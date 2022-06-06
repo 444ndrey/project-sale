@@ -166,6 +166,26 @@ exports.savePassword = (pass) => {
         }
     }).then(res => res);
 }
+exports.getPurchaseById = id => {
+   return knex.select().from('Purchase').where('id',id).first().then((res => res));
+}
+exports.getProductsbyPurchase = id => {
+    return knex.select().from('PurchaseProduct').where('purchase',id).then((res) => res)
+}
+
+exports.getSalebyId = id => {
+    return knex.select().from('Sale').where('id',id).first().then(res => res);
+}
+exports.getProductsbySale = id => {
+    return knex.select().from('SaleEntity').where('sale',id).then(res => res);
+}
+exports.getProductbyEntityId = id => {
+    return knex.select().from('Entity').where('id',id).first().then(res => {
+        return res.product;
+    }).then(productId => {
+        return knex.select().from('Product').where('id',productId).first();
+    }).then(res => res)
+}
 
 
 

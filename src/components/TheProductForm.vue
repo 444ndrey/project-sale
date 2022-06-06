@@ -53,7 +53,7 @@
       </div>
     </div>
     <div class="filed__item">
-      <p class="field__item-label field__item-necessary">
+      <p class="field__item-label">
         Цена за единицу c учетом НДС: {{ sum }}&#8381;
       </p>
     </div>

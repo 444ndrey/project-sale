@@ -76,6 +76,7 @@
             </svg>
           </router-link>
           <!-- <img class="logo" src="./assets/icons/logo.svg" draggable="false" /> -->
+          <p class="title2 last-child">В разработке</p>
         </nav>
       </div>
     </div>
@@ -137,6 +138,10 @@ export default {
 }
 .win {
   height: 100%;
+}
+.last-child{
+  margin-left: auto;
+  color: #b9b9b9ee;
 }
 @media screen and (max-width: 750px) {
   .navbar {

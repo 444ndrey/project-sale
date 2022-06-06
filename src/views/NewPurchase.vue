@@ -2,7 +2,7 @@
   <div>
     <div class="control-win container">
       <header class="head">
-        <h2 class="title1">Покупка</h2>
+        <h2 class="title1">Покупка:</h2>
       </header>
       <div class="message-error" v-if="error.isActive">
         <ul>
@@ -19,7 +19,7 @@
           ></SelectBox>
         </div>
         <div class="field-item">
-          <label for="">Дата покупки</label>
+          <label for="">Дата покупки:</label>
           <input
             v-model="datePicker"
             class="datePicker"

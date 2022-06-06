@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import store from '../store';
 //#region Imports Components
 import Store from '../views/Store.vue';
 import Balance from '../views/Balance.vue';
@@ -13,7 +14,7 @@ import NewPurchase from '../views/NewPurchase.vue';
 import NewSale from '../views/NewSale.vue';
 import Settings  from '../views/Settings.vue';
 import Lock from '../views/Lock.vue';
-import store from '../store';
+import OperationInfo from '../views/OperationInfo.vue';
 
 //#endregion
 const routes = [
@@ -82,6 +83,11 @@ const routes = [
     name: 'Lock',
     component: Lock
   },
+  {
+    path: '/operationinfo',
+    name: 'OperationInfo',
+    component: OperationInfo
+  },
 ]
 
 const router = createRouter({
@@ -89,7 +95,6 @@ const router = createRouter({
   routes
 });
 router.beforeEach((to,from,next) => {
-  console.log(store.state.auth.isLock)
     if(store.state.auth.isLock == true && to.name != 'Lock'){
       next({name:'Lock'})
     }else{

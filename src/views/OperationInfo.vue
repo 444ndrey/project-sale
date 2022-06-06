@@ -93,6 +93,10 @@
           Сумма: &#8381;{{ getTotalSumSale(operation.products) }}
         </p>
       </div>
+      <div id="pdf">
+        <p>SOME BILL</p>
+        <button class="btn1" @click="print">Скачать</button>
+      </div>
     </div>
   </div>
 </template>
@@ -187,6 +191,10 @@ export default {
       return sum.toFixed(2);
     }
 
+    function print(){
+        ipcRenderer.send('save-bill');
+    }
+
     onMounted(() => {
       if (operation.value.type == "buy") {
         setPurchaseInfo();
@@ -197,7 +205,7 @@ export default {
         console.log(operation.value);
       }, 2300);
     });
-    return { operation, dateString, getProductSum, getTotalSumPurchase,getTotalSumSale };
+    return { operation, dateString, getProductSum, getTotalSumPurchase,getTotalSumSale, print };
   },
 };
 </script>

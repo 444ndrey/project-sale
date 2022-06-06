@@ -1,5 +1,8 @@
-const { ipcMain, electron} = require('electron');
+const { ipcMain, BrowserWindow} = require('electron');
+const electron = require('electron')
 const db = require('./database.js');
+const path = require('path');
+const fs = require('fs');
 module.exports = {
     listen: () => {
         ipcMain.on('get-all-agents', (e, ...args) => {
@@ -84,6 +87,8 @@ module.exports = {
         });
         ipcMain.handle('get-product-by-entity',(e,id) => {
             return db.getProductbyEntityId(id);
+        });
+        ipcMain.on('save-bill',e => {
         })
 
         

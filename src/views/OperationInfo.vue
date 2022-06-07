@@ -135,8 +135,10 @@
                 <td style="border: 2px solid;">{{item.info.nds}}% - {{getNdsFromPrice(item.info.price * item.amount, item.info.nds)}}руб.</td>
             </tr>
         </table>
-        <div style="display: flex;">
-        <h2>Итого: {{getTotalSumSale(operation.products)}} рублей</h2>
+        <div style="display: flex; flex-direction: column;">
+        <h2 style="margin: 5px 0;">Итого: {{getTotalSumSale(operation.products)}} рублей</h2>
+        <h3 v-if="operation.contract != '' && operation.contract != null" style="margin: 5px 0;">Основание: Договор №{{operation.contract}}</h3>
+        <h3 v-if="operation.payday != null" style="margin: 5px 0;">Оплатить до: {{formatDate(operation.payday)}}</h3>
         </div>
 
       </div>
@@ -167,6 +169,15 @@ export default {
       address: "",
       name: "",
     });
+    function formatDate(date){
+      let day =
+        date.getDate() > 9
+          ? date.getDate()
+          : "0" + date.getDate();
+      let temp = date.getMonth() + 1;
+      let month = temp > 9 ? temp : "0" + temp;
+      return `${day}.${month}.${date.getFullYear()}`;
+    }
     let dateString = computed(() => {
       let day =
         operation.value.date.getDate() > 9
@@ -183,12 +194,14 @@ export default {
       date: new Date(),
       comment: "",
       products: [],
+      payday: null,
+      contract: ''
     });
 
     function setPurchaseInfo() {
       ipcRenderer.invoke("get-purchase", route.query.id).then((res) => {
-        (operation.value.date = new Date(res.date)),
-          (operation.value.comment = res.comment);
+        operation.value.date = new Date(res.date);
+        operation.value.comment = res.comment;
         ipcRenderer.invoke("get-agent", res.agent).then((agent) => {
           operation.value.agent = agent;
         });
@@ -210,8 +223,10 @@ export default {
     }
     function setSaleInfo() {
       ipcRenderer.invoke("get-sale", route.query.id).then((res) => {
-        (operation.value.date = new Date(res.date)),
-          (operation.value.comment = res.comment);
+        operation.value.date = new Date(res.date);
+        operation.value.comment = res.comment;
+        operation.value.contract = res.contract;
+        if(res.payday != null) operation.value.payday= new Date(res.payday);
         ipcRenderer.invoke("get-agent", res.agent).then((agent) => {
           operation.value.agent = agent;
         });
@@ -275,7 +290,7 @@ export default {
       });
       }
     });
-    return { operation, dateString, getProductSum, getTotalSumPurchase,getTotalSumSale, print,billEl,getPriceWithNds,getNdsFromPrice, orgInfo};
+    return { operation, dateString, getProductSum, getTotalSumPurchase,getTotalSumSale, print,billEl,getPriceWithNds,getNdsFromPrice, orgInfo, formatDate};
   },
 };
 </script>
@@ -305,7 +320,7 @@ header {
 }
 .info-items {
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   gap: 50px;
   width: 100%;
 }

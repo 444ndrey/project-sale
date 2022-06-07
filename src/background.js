@@ -102,11 +102,11 @@ ipcMain.on('save-bill', async (e, html) => {
           }
           win.webContents.printToPDF(options).then(data => {
             fs.writeFile(path.filePath, data, function (err) { });
-          }).catch(error => {
-            console.log(error)
           }).then(res => {
             win.destroy();
-          });
+          }).catch(error => {
+            console.log(error)
+          })
         }
       });
     })

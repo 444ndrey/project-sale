@@ -9,7 +9,6 @@
           <h2 class="title1" v-else>
             Продажа №{{ $route.query.id }} от {{ dateString }}
           </h2>
-          <button class="btn1" v-if="$route.query.type == 'sale'" @click="print">Сформировать счет</button>
           <button class="btn2" @click="$router.go(-1)">Назад</button>
         </header>
         <div class="info-items">
@@ -94,6 +93,7 @@
         <p class="title1" v-else>
           Сумма: &#8381;{{ getTotalSumSale(operation.products) }}
         </p>
+         <button class="btn1" v-if="$route.query.type == 'sale'" @click="print">Сформировать счет</button>
       </div>
     <!-- BILL -->
     <div v-show="false" class="container">

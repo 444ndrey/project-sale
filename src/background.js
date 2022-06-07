@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, ipcMain } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain, dialog } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 // import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 import bridge from './bridge.js'
@@ -79,52 +79,39 @@ if (isDevelopment) {
     })
   }
 }
-ipcMain.on('save-bill', async (e,html) => {
+ipcMain.on('save-bill', async (e, html) => {
 
   try {
+    dialog.showSaveDialog({
+      title: 'Сохранение Счета',
+      filters: [
+        { name: 'PDF', extensions: ['pdf'] }
+      ],
+      defaultPath: 'Счет.pdf',
+      properties: ['openFile', 'openDirectory']
+    }).then(async path => {
+      if (!path.canceled) {
 
-      const browser = await puppeteer.launch();
-      const page = await browser.newPage();
-      await page.setContent(html);
-      await page.emulateMediaType('screen');
-      await page.pdf({
-          path: 'bill.pdf',
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+        await page.setContent(html);
+        await page.emulateMediaType('screen');
+        await page.pdf({
+          path: path.filePath,
           format: 'A4',
           printBackground: true
-      });
-      await browser.close();
+        });
+        await browser.close();
+      }
+
+
+
+    });
+
+
   } catch (e) {
-
-    console.log('IT IS OVER',e)
+    console.log('IT IS OVER', e)
   }
-
-
-
-  //#region 
-  // let filepath1 = path.join(__dirname, 'file1.pdf');
-  // console.log(filepath1)
-  // let options = {
-  //   marginsType: 0,
-  //   pageSize: 'A4',
-  //   printBackground: true,
-  //   printSelectionOnly: false,
-  //   landscape: false,
-  // }
-  // let win = new BrowserWindow();
-  // win.loadURL('data:text/html;charset=utf-8,<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>MyYTitle</title> </style></head> <id="pdf" body>Hello world from Lyon, FR</body>')
-  // win.webContents.printToPDF(options).then(data => {
-  //   fs.writeFile(filepath1, data, function (err) {
-  //     if (err) {
-  //       console.log(err);
-  //     } else {
-  //       console.log('PDF Generated Successfully');
-  //     }
-  //   });
-  // }).catch(error => {
-  //   console.log(error)
-  // });
-  //#endregion
-
 })
 
 

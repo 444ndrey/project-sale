@@ -25,7 +25,7 @@ async function createWindow() {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: true,
-      contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
+      contextIsolation: false,
       spellcheck: false
     }
   })
@@ -82,31 +82,34 @@ if (isDevelopment) {
 ipcMain.on('save-bill', async (e, html) => {
 
   try {
-    dialog.showSaveDialog({
-      title: 'Сохранение Счета',
-      filters: [
-        { name: 'PDF', extensions: ['pdf'] }
-      ],
-      defaultPath: 'Счет.pdf',
-      properties: ['openFile', 'openDirectory']
-    }).then(async path => {
-      if (!path.canceled) {
+    let win = new BrowserWindow({ title: 'Счет',show: false });
+    win.loadURL(`data:text/html;charset=utf-8,<body>${html}</body>`).then(() => {
+      dialog.showSaveDialog({
+        title: 'Сохранение Счета',
+        filters: [
+          { name: 'PDF', extensions: ['pdf'] }
+        ],
+        defaultPath: 'Счет.pdf',
+        properties: ['openFile', 'openDirectory']
+      }).then(async path => {
+        if (!path.canceled) {
+          let options = {
+            marginsType: 0,
+            pageSize: 'A4',
+            printBackground: true,
+            printSelectionOnly: false,
+            landscape: false,
+          }
+          win.webContents.printToPDF(options).then(data => {
+            fs.writeFile(path.filePath, data, function (err) { });
+          }).catch(error => {
+            console.log(error)
+          });
+        }
+      });
 
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
-        await page.setContent(html);
-        await page.emulateMediaType('screen');
-        await page.pdf({
-          path: path.filePath,
-          format: 'A4',
-          printBackground: true
-        });
-        await browser.close();
-      }
 
-
-
-    });
+    })
 
 
   } catch (e) {

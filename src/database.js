@@ -186,6 +186,21 @@ exports.getProductbyEntityId = id => {
         return knex.select().from('Product').where('id',productId).first();
     }).then(res => res)
 }
+exports.getOrgInfo = () => {
+    return knex.select().from('Org').then(res => {
+        if(res.length == 0) return null;
+        return res[0];
+    }).then(res => res);
+}
+exports.setOrgInfo = data => {
+    knex.select().from('Org').then(res => {
+        if(res.length == 0){
+            knex('Org').insert(data).then(res => res);
+        }else{
+            knex.select().from('Org').first().update(data).then(res => res);
+        }
+    })
+}
 
 
 

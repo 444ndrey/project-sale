@@ -104,14 +104,12 @@ ipcMain.on('save-bill', async (e, html) => {
             fs.writeFile(path.filePath, data, function (err) { });
           }).catch(error => {
             console.log(error)
+          }).then(res => {
+            win.destroy();
           });
         }
       });
-
-
     })
-
-
   } catch (e) {
     console.log('IT IS OVER', e)
   }

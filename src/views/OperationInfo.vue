@@ -97,11 +97,22 @@
       </div>
     <!-- BILL -->
     <div v-show="false" class="container">
+    <!-- ACCOUNT STAFF -->
       <div class="" ref="billEl" style="margin: 10px; padding-left: 50px;  font-family:Calibri; font-weight: 400;">
-        <div class="bill-header" style="padding-bottom:12px; border-bottom: 3px solid #000; margin: 20px 0; ">
-            <h2>Счет №{{$route.query.id}} от {{dateString}}</h2>
+        <div style="display: flex; justify-content: flex-end; margin-left: 50px;">
+          <div style="display:flex;flex-direction: column; padding: 10px;">
+          <p style="margin: 7px 0;">Адрес: <b>{{orgInfo.address}}</b></p>
+          <p style="margin: 7px 0;">ИНН: <b>{{orgInfo.inn}}</b></p>
+          <p style="margin: 7px 0;">БИК: <b>{{orgInfo.bik}}</b></p>
+          <p style="margin: 7px 0;">Р/C №: <b>{{orgInfo.account}}</b></p>
+          </div>
+        </div>
+        <!-- INFO -->
+        <div style="padding-bottom:12px; border-bottom: 3px solid #000; margin: 20px 0; ">
+            <h2>Счет №{{$route.query.id}} от {{dateString}} для Заказчика: {{operation.agent.name}}</h2>
             <div>
-              <p style="word-wrap: break-word;">Поставщик: - </p>
+              <p style="word-wrap: break-word;">Поставщик: <b>{{orgInfo.name}}, ИНН: {{orgInfo.inn}},
+              КПП: {{orgInfo.kpp}}, адрес: {{orgInfo.address}}</b> </p>
             </div>
             <div>
               <p style="word-wrap: break-word;">Клиент: <b>{{operation.agent.name}}, ИНН: {{operation.agent.inn}},
@@ -147,6 +158,15 @@ export default {
   setup() {
     let billEl = ref(null)
     let route = useRoute();
+    let orgInfo = ref({
+      bik: "",
+      bankName: "",
+      account: "",
+      inn: "",
+      kpp: "",
+      address: "",
+      name: "",
+    });
     let dateString = computed(() => {
       let day =
         operation.value.date.getDate() > 9
@@ -247,9 +267,15 @@ export default {
         setPurchaseInfo();
       } else {
         setSaleInfo();
+        ipcRenderer.invoke("get-org-data").then(res => {
+        if (res != null) {
+          console.log(res);
+          orgInfo.value = res;
+        }
+      });
       }
     });
-    return { operation, dateString, getProductSum, getTotalSumPurchase,getTotalSumSale, print,billEl,getPriceWithNds,getNdsFromPrice};
+    return { operation, dateString, getProductSum, getTotalSumPurchase,getTotalSumSale, print,billEl,getPriceWithNds,getNdsFromPrice, orgInfo};
   },
 };
 </script>

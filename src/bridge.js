@@ -1,6 +1,11 @@
 const { ipcMain, BrowserWindow } = require('electron');
 const electron = require('electron')
 const db = require('./database.js');
+const os = require('os');
+const path = require('path')
+const storage = require('electron-json-storage');
+console.log(require('electron').app.getAppPath());
+storage.setDataPath(require('electron').app.getAppPath());
 module.exports = {
     listen: () => {
         ipcMain.on('get-all-agents', (e, ...args) => {
@@ -85,6 +90,12 @@ module.exports = {
         });
         ipcMain.handle('get-product-by-entity', (e, id) => {
             return db.getProductbyEntityId(id);
+        });
+        ipcMain.on('set-org-data', (e, data) => {
+            db.setOrgInfo(data);
+        });
+        ipcMain.handle('get-org-data', (e) => {
+            return db.getOrgInfo();
         });
 
 

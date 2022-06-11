@@ -80,7 +80,6 @@ if (isDevelopment) {
   }
 }
 ipcMain.on('save-bill', async (e, html) => {
-
   try {
     let win = new BrowserWindow({ title: 'Счет',show: false });
     win.loadURL(`data:text/html;charset=utf-8,<body>${html}</body>`).then(() => {

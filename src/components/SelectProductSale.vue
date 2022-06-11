@@ -41,13 +41,8 @@
             <label class="field-label">по &#8381;{{ product.price }}</label>
           </div>
           <div class="field">
-            <label class="field-label">Скидка: </label>
-            <input
-              type="number"
-              class="control-input"
-              disabled="true"
-              placeholder="В разработке"
-            />
+            <label class="field-label">Цена: </label>
+             <InputPrice v-model:inputValue="product.price"></InputPrice>
           </div>
         </div>
         <div class="info-result">
@@ -105,7 +100,7 @@ export default {
         products.value = res.map((item) => {
           return {
             id: item.id,
-            name: `${item.name} - ${parseFloat(item.price).toFixed(2)} руб.`,
+            name: item.name,
             code: item.code,
             price: parseFloat(item.price).toFixed(2),
             unit: item.unit,
@@ -124,8 +119,7 @@ export default {
       }
       if(amount.value < 1){
          error.value.messages.push(
-          "Кол-во товара не может быть равно 0"
-        );
+          "Кол-во товара не может быть равно 0");
       }
       if (error.value.messages.length > 0) {
         error.value.isActive = true;

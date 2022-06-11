@@ -33,6 +33,7 @@
           maxlength="4"
           placeholder="Ед.измерения"
           v-model="product.unit"
+          @keypress="fixUnit($event)"
         />
       </div>
     </div>
@@ -52,11 +53,7 @@
         />
       </div>
     </div>
-    <div class="filed__item">
-      <p class="field__item-label">
-        Цена за единицу c учетом НДС: {{ sum }}&#8381;
-      </p>
-    </div>
+    <div class="filed__item"></div>
   </div>
   <div class="params">
     <p class="field__item-label">Дополнительные параметры:</p>
@@ -67,19 +64,16 @@
 </template>
 
 <script>
-import { computed } from "@vue/runtime-core";
 import InputPrice from "./uiControls/InputPrice.vue";
 export default {
   props: ["product"],
   setup(props) {
-    let sum = computed(() => {
-      let res = (props.product.nds / 100) * parseFloat(props.product.price) + parseFloat(props.product.price);
-      if(typeof res !== 'number' || isNaN(res)){
-        return 0;
-      }else{
-        return res.toFixed(2);
-      }
-    });
+    function fixUnit(e) {
+      let char = String.fromCharCode(e.keyCode); // Get the character
+      if (/^[А-Яа-яA-Za-z]+$/.test(char)) return true;
+      // Match with regex
+      else e.preventDefault(); // If not match, don't add to input text
+    }
     function fixNdsLength(e) {
       if (e.target.value.toString().length >= 3) {
         e.preventDefault();
@@ -91,7 +85,7 @@ export default {
         props.product.nds = 100;
       }
     }
-    return { fixNdsLength, fixNds, sum };
+    return { fixNdsLength, fixNds, fixUnit };
   },
   components: { InputPrice },
 };

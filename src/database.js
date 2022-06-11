@@ -113,10 +113,11 @@ exports.addNewSale = sale => {
     }).returning('id').into('Sale').then(el => {
         let id = el[0].id;
         let products = sale.products.map(item => {
+            console.log(item.price)
             return {
                 sale: id,
                 amount: item.amount,
-                discount: null,
+                price: item.price,
                 product: item.id
             }
         });

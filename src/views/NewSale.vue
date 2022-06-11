@@ -80,7 +80,7 @@
                 </p>
               </div>
               <p class="list-item-text">
-                Всего: <b>&#8381;{{ item.sum }}</b> c учетом НДС {{item.product.nds}}%: <b>&#8381;{{item.totalSum}}</b>
+                Всего: <b>&#8381;{{ item.sum }}</b>
               </p>
               <button class="list-item-del" @click="delElement(item)">
                 &#10006;
@@ -133,7 +133,7 @@ export default {
       if (products.value.length != 0) {
         let value = 0;
         products.value.forEach((el) => {
-          value += parseFloat(el.totalSum);
+          value += parseFloat(el.sum);
         });
         return value;
       } else {
@@ -147,7 +147,6 @@ export default {
       selectedAgent = agent;
     }
     function addProduct(value) {
-      console.log(value)
       let duplicates = products.value.filter(
         (item) =>
           item.entity == value.entity && item.product.id == value.product.id
@@ -158,7 +157,7 @@ export default {
             item.entity != value.entity && item.product.id != value.product.id
         );
       }
-      value.totalSum = ((value.product.nds / 100) * parseFloat(value.sum) + parseFloat(value.sum)).toFixed(2);
+      console.log(value);
       products.value.push(value);
       isProductAddWin.value = false;
     }
@@ -183,9 +182,11 @@ export default {
         error.value.isActive = true;
       } else {
         let productsToSend = products.value.map((item) => {
+          console.log(item);
           return {
             id: item.entity,
             amount: item.amount,
+            price: item.product.price
           };
         });
         let sale = {

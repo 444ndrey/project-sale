@@ -112,7 +112,7 @@ export default {
         let prod = {};
         Object.assign(prod, product.value);
         ipcRenderer.send("edit-product", prod);
-        router.go(-1);
+        router.push('/store');
       }
     }
     return { product, items, saveChanges, error, dialog, delProduct,totalAmount  };

@@ -4,7 +4,10 @@ module.exports = {
     electronBuilder: {
       nodeIntegration: true,
       builderOptions: {
-        extraResources: ['src/res/']
+        extraResources: ['src/res/'],
+        win:{
+          icon: './icon.ico'
+        }
       },
       externals: ['knex','sqlite3','better-sqlite3'],
     }

@@ -3,7 +3,7 @@
     <div class="header">
       <div class="container">
         <nav class="navbar">
-          <router-link to="/balance"
+          <router-link class="nodrag" to="/balance"
             ><svg
               width="40"
               height="30"
@@ -19,7 +19,7 @@
                 fill="#969696"
               /></svg
           ></router-link>
-          <router-link to="/store"
+          <router-link class="nodrag" to="/store"
             ><svg
               width="34"
               height="40"
@@ -33,7 +33,7 @@
                 fill="#969696"
               /></svg
           ></router-link>
-          <router-link to="/agents"
+          <router-link class="nodrag" to="/agents"
             ><svg
               width="48"
               height="48"
@@ -47,7 +47,7 @@
                 fill="#969696"
               /></svg
           ></router-link>
-          <router-link to="/stat"
+          <router-link class="nodrag" to="/stat"
             ><svg
               width="40"
               height="34"
@@ -61,7 +61,7 @@
                 fill="#969696"
               /></svg
           ></router-link>
-          <router-link to="/settings">
+          <router-link class="nodrag" to="/settings">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="navbar-icon"
@@ -77,6 +77,11 @@
           </router-link>
           <!-- <img class="logo" src="./assets/icons/logo.svg" draggable="false" /> -->
           <p class="title2 last-child">В разработке</p>
+          <div class="win-btns nodrag">
+            <button class="win-btn nodrag" @click="minimazeWin">&#8722;</button>
+            <button class="win-btn nodrag" @click="resizeWin">&#128471;&#xFE0E;</button>
+            <button class="win-btn nodrag" @click="closeWin">&#128473;&#xFE0E;</button>
+          </div>
         </nav>
       </div>
     </div>
@@ -85,8 +90,23 @@
 </template>
 
 <script>
+import { ipcRenderer } from 'electron';
 export default {
-  setup() {},
+  setup() {
+    function closeWin(){
+      console.log(5+5);
+      ipcRenderer.send('close-btn', true)
+    }
+    function resizeWin(){
+      ipcRenderer.send('resize-btn', true);
+    }
+    function minimazeWin(){
+       ipcRenderer.send('minimize-btn', true);
+    }
+    return {
+      closeWin, resizeWin, minimazeWin
+    }
+  },
 };
 </script>
 
@@ -104,6 +124,13 @@ export default {
   border-bottom: 1px solid rgba(202, 202, 202, 0.933);
   position: fixed;
   top: 0;
+  -webkit-app-region: drag;
+}
+.drag{
+  -webkit-app-region: drag;
+}
+.nodrag{
+   -webkit-app-region: no-drag;
 }
 .navbar {
   display: flex;
@@ -140,8 +167,34 @@ export default {
   height: 100%;
 }
 .last-child{
-  margin-left: auto;
   color: #b9b9b9ee;
+  position: absolute;
+  right: 0px;
+  margin-top: 100px;
+  padding: 10px;
+}
+.win-btns{
+  display: flex;
+  gap:5px;
+  align-items: center;
+   position: absolute;
+  right: 0px;
+  top: 0px;
+  padding: 10px 10px;
+  height: 100%;
+}
+.win-btn{
+  background-color: transparent;
+  border:none;
+  padding: 0 10px;
+  text-align: center;
+  font-weight: bold;
+  color: var(--gray-main);
+  cursor: pointer;
+} 
+.win-btn:hover{
+  background-color: #eeee;
+  color: var(--gray-secound);
 }
 @media screen and (max-width: 750px) {
   .navbar {

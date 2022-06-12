@@ -97,8 +97,6 @@ module.exports = {
         ipcMain.handle('get-org-data', (e) => {
             return db.getOrgInfo();
         });
-
-
     }
 }
 

@@ -11,7 +11,12 @@ const fs = require('fs-extra');
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
-  { scheme: 'app', privileges: { secure: true, standard: true } }
+  {
+    scheme: 'app', privileges: {
+      secure: true, titleBarStyle: 'hidden',
+      titleBarOverlay: true
+    }
+  }
 ])
 
 async function createWindow() {
@@ -19,7 +24,10 @@ async function createWindow() {
   const win = new BrowserWindow({
     icon: './icon.ico',
     width: 1280,
-    height: 920,
+    height: 900,
+    frame: false,
+    minWidth: 1000,
+    minHeight: 650,
     webPreferences: {
 
       // Use pluginOptions.nodeIntegration, leave this alone
@@ -39,7 +47,6 @@ async function createWindow() {
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
   }
-  win.maximize();
   win.removeMenu();
 }
 
@@ -81,7 +88,7 @@ if (isDevelopment) {
 }
 ipcMain.on('save-bill', async (e, html) => {
   try {
-    let win = new BrowserWindow({ title: 'Счет',show: false });
+    let win = new BrowserWindow({ title: 'Счет', show: false });
     win.loadURL(`data:text/html;charset=utf-8,<body>${html}</body>`).then(() => {
       dialog.showSaveDialog({
         title: 'Сохранение Счета',
@@ -112,7 +119,22 @@ ipcMain.on('save-bill', async (e, html) => {
   } catch (e) {
     console.log('IT IS OVER', e)
   }
+});
+
+//menu window event listeners 
+ipcMain.on('close-btn', (e, data) => {
+  app.exit();
+});
+ipcMain.on('minimize-btn', (e,data) => {
+    let win = BrowserWindow.getFocusedWindow();
+    win.minimize();
+});
+ipcMain.on('resize-btn', (e,data) => {
+  let win = BrowserWindow.getFocusedWindow();
+  win.isMaximized() ? win.unmaximize() : win.maximize();
 })
+
+
 
 
 bridge.listen();

@@ -3,7 +3,7 @@
     <table class="table">
       <th class="table-header">Тип операции</th>
       <th class="table-header">Контрагент</th>
-      <th class="table-header">Сумма</th>
+      <th class="table-header sortable" @click="$emit('sort-sum')">Сумма</th>
       <th class="table-header sortable" @click="$emit('sort-date')">Дата</th>
       <th class="table-header">Подробнее</th>
       <tr class="table-row" v-for="item in ops" :key="item.id">
@@ -14,8 +14,8 @@
           <div class="table-type table-type-sale" v-else>Закупка</div>
         </td>
         <td class="table-value">{{ item.agent.name }}</td>
-        <td class="table-value placeholder-text" :class="{ negative: item.sum < 0 }">
-          placeholder
+        <td class="table-value">
+          &#8381;{{item.sum.toFixed(2)}}
         </td>
         <td class="table-value">{{ item.date.split('-').reverse().join('.') }}</td>
         <td class="table-value"><a @click.prevent="$router.push({name: 'OperationInfo', query: {id: item.id, type: item.type }})">открыть</a></td>
@@ -36,6 +36,7 @@ export default {
           agent: props.agents.find((a) => a.id == item.agent),
           date: item.date,
           type: item.type,
+          sum: item.sum
         };
       });
     });

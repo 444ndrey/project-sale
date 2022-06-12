@@ -17,11 +17,12 @@
           &#8648; Оформить покупку
         </button>
       </div>
-        <TheOperationsHistory
-          :operations="searchResult"
-          :agents="agents"
-          @sort-date="sortByDate"
-        ></TheOperationsHistory>
+      <TheOperationsHistory
+        :operations="searchResult"
+        :agents="agents"
+        @sort-date="sortByDate"
+        @sort-sum="sortBySum"
+      ></TheOperationsHistory>
     </div>
   </div>
 </template>
@@ -39,6 +40,7 @@ export default {
     let agents = ref([]);
     let sorting = ref({
       isFirstLast: false,
+      isExpensiveFirst: false
     });
     const operations = ref([]);
     let searchValue = ref("");
@@ -63,13 +65,34 @@ export default {
     function setOperations() {
       sales = sales.map((item) => {
         item.type = "sale";
+        ipcRenderer.invoke("get-sale-products", item.id).then((res) => {
+          item.products = res;
+        });
         return item;
       });
       purchase = purchase.map((item) => {
         item.type = "buy";
+        ipcRenderer.invoke("get-purchase-products", item.id).then((res) => {
+          item.products = res;
+        });
         return item;
       });
       operations.value = purchase.concat(sales);
+      setTimeout(() => {
+        operations.value.forEach((item) => {
+          let sum = 0;
+          let type = item.type;
+          item.products.forEach((item) => {
+            if(type == 'buy'){
+              sum += item.cost * item.amount;
+            }else{
+               sum += item.price * item.amount;
+            }
+          });
+          item.sum = sum;
+        });
+      }, 100);
+      console.log(operations.value)
       sortByDate();
     }
     function sortByDate() {
@@ -87,6 +110,14 @@ export default {
           return +aDate - +bDate;
         });
       }
+    }
+    function sortBySum(){
+      if(sorting.value.isExpensiveFirst){
+        operations.value.sort((a,b) => a.sum - b.sum);
+      }else{
+        operations.value.sort((a,b) => b.sum - a.sum);
+      }
+      sorting.value.isExpensiveFirst = !sorting.value.isExpensiveFirst;
     }
     onMounted(() => {
       ipcRenderer.send("get-all-agents");
@@ -119,6 +150,7 @@ export default {
       sorting,
       searchValue,
       searchResult,
+      sortBySum
     };
   },
 };

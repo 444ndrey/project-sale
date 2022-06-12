@@ -174,8 +174,8 @@ export default {
       if (products.value.length == 0) {
         error.value.messages.push("Список товаров не может быть пустым");
       }
-      if (isNaN(isValidDate)) {
-        error.value.messages.push("Дата указана некорректно");
+      if (isNaN(isValidDate) || new Date(datePicker.value).getTime() > new Date(Date.now()).getTime()) {
+        error.value.messages.push("Дата продажи указана некорректно");
       }
 
       if (error.value.messages.length > 0) {

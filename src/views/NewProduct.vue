@@ -32,7 +32,7 @@ export default {
       name: "",
       unit: "",
       price: 0,
-      nds: 0
+      nds: 20
     });
     const error = ref({
       messages: [],

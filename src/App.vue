@@ -191,6 +191,7 @@ export default {
   font-weight: bold;
   color: var(--gray-main);
   cursor: pointer;
+  transition: .3s ease-in-out;
 } 
 .win-btn:hover{
   background-color: #eeee;

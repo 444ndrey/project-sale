@@ -32,8 +32,9 @@ import { ref } from "@vue/reactivity";
 import TheOperationsHistory from "../components/TheOperationsHistory.vue";
 import { computed, onMounted } from "@vue/runtime-core";
 import { ipcRenderer } from "electron";
+import SelectBox from "../components/uiControls/SelectBox.vue";
 export default {
-  components: { TheOperationsHistory },
+  components: { TheOperationsHistory, SelectBox },
   setup() {
     let purchase = [];
     let sales = [];
@@ -150,7 +151,7 @@ export default {
       sorting,
       searchValue,
       searchResult,
-      sortBySum
+      sortBySum,
     };
   },
 };
@@ -160,6 +161,7 @@ export default {
 .search-panel {
   display: flex;
   gap: 10px;
+  align-items: center;
 }
 .search-panel input {
   margin-right: 30px;

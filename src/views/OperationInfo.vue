@@ -32,7 +32,7 @@
         </div>
       </div>
       <div class="control-win">
-        <p class="title2">Товар в операции:</p>
+        <p class="title2">Товары в операции:</p>
         <!-- buy list -->
         <div class="list-items-wrap" v-if="$route.query.type == 'buy'">
           <div class="list-items">
@@ -327,7 +327,7 @@ export default {
     function getUnitedPorducts(products){
       let res = [];
       products.forEach(el => {
-          let count = res.filter(p => p.info.id == el.info.id).length;
+          let count = res.filter(p => p.info.id == el.info.id && el.price == p.price).length;  //NOT TESTED 
           if(count == 0){
             res.push({
               id: el.id,

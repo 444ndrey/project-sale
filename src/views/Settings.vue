@@ -44,7 +44,7 @@
             v-model="org.name"
           />
         </div>
-        <div class="item">
+        <!-- <div class="item">
           <label>Название БАНКА:</label>
           <input
             type="text"
@@ -53,7 +53,7 @@
             maxlength="50"
             v-model="org.bankName"
           />
-        </div>
+        </div> -->
         <div class="item">
           <label>Номер счета:</label>
           <input

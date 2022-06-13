@@ -1,10 +1,6 @@
-const { ipcMain, BrowserWindow } = require('electron');
-const electron = require('electron')
+const { ipcMain} = require('electron');
 const db = require('./database.js');
-const os = require('os');
-const path = require('path')
 const storage = require('electron-json-storage');
-console.log(require('electron').app.getAppPath());
 storage.setDataPath(require('electron').app.getAppPath());
 module.exports = {
     listen: () => {
@@ -97,6 +93,12 @@ module.exports = {
         ipcMain.handle('get-org-data', (e) => {
             return db.getOrgInfo();
         });
+        ipcMain.handle('get-all-sales-v2', (e) => {
+            return db.getAllSalesV2();
+        });
+        ipcMain.handle('get-all-purchase-v2', (e) => {
+            return db.getAllPurchasesV2();
+        })
     }
 }
 

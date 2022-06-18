@@ -35,14 +35,14 @@
 </template>
 
 <script>
-import { computed, ref } from "@vue/runtime-core";
+import { computed, } from "@vue/runtime-core";
 export default {
   props: ["operations", "agents"],
   setup(props) {
     const ops = computed(() => {
-      return props.operations.map((item) => {
+      return props.operations.map((item,index) => {
         return {
-          id: item.id,
+          id: index,
           agent: props.agents.find((a) => a.id == item.agent),
           date: item.date,
           type: item.type,

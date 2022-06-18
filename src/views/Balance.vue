@@ -18,6 +18,7 @@
         </button>
       </div>
       <TheOperationsHistory
+        v-if="isDataLoaded"
         :operations="searchResult"
         :agents="agents"
         @sort-date="sortByDate"
@@ -30,12 +31,12 @@
 <script>
 import { ref } from "@vue/reactivity";
 import TheOperationsHistory from "../components/TheOperationsHistory.vue";
-import { computed, onMounted, onBeforeMount } from "@vue/runtime-core";
+import { computed, onMounted} from "@vue/runtime-core";
 import { ipcRenderer } from "electron";
-import SelectBox from "../components/uiControls/SelectBox.vue";
 export default {
-  components: { TheOperationsHistory, SelectBox },
+  components: { TheOperationsHistory},
   setup() {
+    let isDataLoaded = ref(false);
     let purchase = [];
     let sales = [];
     let agents = ref([]);
@@ -63,7 +64,15 @@ export default {
       }
       return result;
     });
-    function setOperations() {
+     async function fillProducts(){
+      for(const item of purchase){
+        item.type = "buy";
+        await ipcRenderer.invoke("get-purchase-products", item.id).then((res) => {
+        item.products = res;
+        });
+      }
+    }
+   async function setOperations() {
       sales = sales.map((item) => {
         item.type = "sale";
         ipcRenderer.invoke("get-sale-products", item.id).then((res) => {
@@ -71,15 +80,8 @@ export default {
         });
         return item;
       });
-      purchase = purchase.map((item) => {
-        item.type = "buy";
-        ipcRenderer.invoke("get-purchase-products", item.id).then((res) => {
-          item.products = res;
-        });
-        return item;
-      });
+      await fillProducts();
       operations.value = purchase.concat(sales);
-      setTimeout(() => {
         operations.value.forEach((item) => {
           let sum = 0;
           let type = item.type;
@@ -92,7 +94,6 @@ export default {
           });
           item.sum = sum;
         });
-      }, 50);
       sortByDate();
     }
     function sortByDate() {
@@ -119,28 +120,22 @@ export default {
       }
       sorting.value.isExpensiveFirst = !sorting.value.isExpensiveFirst;
     }
-    onBeforeMount( () => {
-       ipcRenderer.send("get-all-agents");
-       ipcRenderer.on("send-all-agents", (e, data) => {
-        agents.value = data;
-        return ipcRenderer
-          .invoke("get-all-sales")
-          .then((result) => {
-            sales = result;
-            return;
-          })
-          .then(() => {
-            return ipcRenderer
-              .invoke("get-all-purchases")
-              .then((result) => {
-                purchase = result;
-              })
-              .then(() => {
-                setOperations();
-                return;
-              });
-          });
+    onMounted(async () => {
+      await ipcRenderer.send("get-all-agents");
+      await ipcRenderer.on("send-all-agents", async (e, data) => {
+        agents.value = await data;
       });
+      await ipcRenderer.invoke("get-all-sales").then((result) => {
+        sales = result;
+        return;
+      });
+      await ipcRenderer
+        .invoke("get-all-purchases")
+        .then((result) => {
+          purchase = result;
+        })
+        setOperations();
+        isDataLoaded.value = true;
     });
 
     return {
@@ -151,6 +146,7 @@ export default {
       searchValue,
       searchResult,
       sortBySum,
+      isDataLoaded
     };
   },
 };

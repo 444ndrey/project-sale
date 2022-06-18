@@ -152,7 +152,7 @@ export default {
       if (products.value.length == 0) {
         error.value.messages.push("Список товаров не может быть пустым");
       }
-      if (isNaN(isValidDate)) {
+      if (isNaN(isValidDate) || new Date(datePicker.value).getTime() > new Date(Date.now()).getTime()) {
         error.value.messages.push("Дата указана некорректно");
       }
 

@@ -55,12 +55,12 @@
     </div>
     <div class="filed__item"></div>
   </div>
-  <div class="params">
+  <!-- <div class="params">
     <p class="field__item-label">Дополнительные параметры:</p>
     <div class="params__table">
       <h4 class="title2">Извините, но доп.парметры пока недоступны.</h4>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>

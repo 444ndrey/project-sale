@@ -204,13 +204,15 @@ exports.setOrgInfo = data => {
 }//ПЕРЕПУТАЛ КОЛ-ВО ПОПРАВЬ
 exports.getAllSalesV2 = () => {
     return knex('Sale').join('SaleEntity','Sale.id', '=', 'SaleEntity.sale')
-    .select(['Sale.*','Product.*','SaleEntity.*','Entity.amount as amount_in_storage','Product.id as info_id'])
+    .select(['Sale.*','Product.*','SaleEntity.*','Entity.amount as amount_in_storage','Entity.cost as product_cost','Product.id as info_id'])
     .join('Entity','SaleEntity.product','=','Entity.id')
     .join('Product','Entity.product','=','Product.id')
     .then(res => res);
 }
 exports.getAllPurchasesV2 = () => {
-    return knex('Purchase').join('PurchaseProduct', 'Purchase.id','=','PurchaseProduct.purchase')
+    return knex('Purchase')
+    .select('Purchase.*','PurchaseProduct.product as product_id','PurchaseProduct.amount as amount','PurchaseProduct.cost as cost','Product.*')
+    .join('PurchaseProduct', 'Purchase.id','=','PurchaseProduct.purchase')
     .join('Product','PurchaseProduct.product','=','Product.id')
     .then(res => res);
 }

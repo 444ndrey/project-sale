@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <div class="chart-wrapper">
-    <label for="">Структура товаров по количеству продаж в единицах:</label>
+    <label for="">Структура товаров по количеству в продажах:</label>
     <Doughnut :chart-data="chartData" :chart-options="chartOptions"></Doughnut>
   </div>
   <div class="chart-wrapper">

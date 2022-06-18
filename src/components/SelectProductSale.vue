@@ -129,6 +129,7 @@ export default {
           entity: selectedEntity.id,
           amount: amount.value,
           sum: sum.value,
+          sumCost: selectedEntity.cost * amount.value
         };
         ctx.emit("addProduct", value);
       }

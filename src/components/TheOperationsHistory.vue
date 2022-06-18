@@ -14,11 +14,21 @@
           <div class="table-type table-type-sale" v-else>Закупка</div>
         </td>
         <td class="table-value">{{ item.agent.name }}</td>
+        <td class="table-value">&#8381;{{ item.sum }}</td>
         <td class="table-value">
-          &#8381;{{item.sum.toFixed(2)}}
+          {{ item.date.split("-").reverse().join(".") }}
         </td>
-        <td class="table-value">{{ item.date.split('-').reverse().join('.') }}</td>
-        <td class="table-value"><a @click.prevent="$router.push({name: 'OperationInfo', query: {id: item.id, type: item.type }})">открыть</a></td>
+        <td class="table-value">
+          <a
+            @click.prevent="
+              $router.push({
+                name: 'OperationInfo',
+                query: { id: item.id, type: item.type },
+              })
+            "
+            >открыть</a
+          >
+        </td>
       </tr>
     </table>
   </div>
@@ -36,7 +46,7 @@ export default {
           agent: props.agents.find((a) => a.id == item.agent),
           date: item.date,
           type: item.type,
-          sum: item.sum
+          sum: item.sum.toFixed(2),
         };
       });
     });
@@ -94,20 +104,20 @@ export default {
 .negative {
   color: #d56262;
 }
-.sortable{
+.sortable {
   cursor: pointer;
   transition: 0.3s ease-in-out;
 }
-.sortable:hover{
+.sortable:hover {
   color: var(--gray-secound);
 }
-.table-value > a{
-  transition: .3s ease-in-out;
+.table-value > a {
+  transition: 0.3s ease-in-out;
   color: var(--gray-main);
   cursor: pointer;
   font-size: 16px;
 }
-.table-value:hover > a{
+.table-value:hover > a {
   color: var(--gray-secound);
   font-size: 17px;
 }

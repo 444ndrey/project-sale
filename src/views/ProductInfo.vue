@@ -23,10 +23,11 @@
       </div>
       <div class="control-win">
         <h2 class="title1">Подробно</h2>
-        <h3 class="amount">В наличии: {{totalAmount}} {{product.unit}}.</h3>
+        <h3 class="amount">В наличии: {{ totalAmount }} {{ product.unit }}.</h3>
         <div class="chart-amountbyprice">
           <AmountByPriceChart :data="items"></AmountByPriceChart>
         </div>
+        <PriceHistoryByProductVue :data="salesHistory" :type="'sale'"></PriceHistoryByProductVue>
       </div>
     </div>
   </div>
@@ -39,6 +40,7 @@ import TheProductForm from "../components/TheProductForm.vue";
 import AmountByPriceChart from "../components/AmountByPriceChart.vue";
 import { ipcRenderer } from "electron";
 import Dialog from "../components/uiControls/Dialog.vue";
+import PriceHistoryByProductVue from "../components/PriceHistoryByProduct.vue";
 export default {
   setup() {
     const dialog = ref({
@@ -48,6 +50,7 @@ export default {
       message: undefined,
     });
     const route = useRoute();
+    const salesHistory = ref([]);
     const router = useRouter();
     const items = ref([]);
     const product = ref({});
@@ -57,31 +60,38 @@ export default {
     });
     const totalAmount = computed(() => {
       let total = 0;
-         items.value.forEach(el => {
-           total += el.amount;
-         });
-        return total;
-    })
+      items.value.forEach((el) => {
+        total += el.amount;
+      });
+      return total;
+    });
     onMounted(() => {
       setupProductInfo();
       setupItems();
+      setupSalesHistory();
     });
     function setupProductInfo() {
       ipcRenderer.invoke("get-product-info", route.query.id).then((res) => {
         product.value = res;
       });
     }
+    function setupSalesHistory() {
+      ipcRenderer.invoke("get-all-sales-v2").then((res) => {
+        salesHistory.value = res.filter((p) => p.info_id == route.query.id);
+      });
+    }
     function setupItems() {
       ipcRenderer.invoke("get-enities", route.query.id).then((res) => {
-        items.value = res.filter(i => i.amount > 0)
+        items.value = res.filter((i) => i.amount > 0);
       });
     }
     function delProduct() {
       dialog.value.type = "warning";
       dialog.value.message = "Вы действительно хотите удалить этот товар ?";
-      
+
       if (items.value.length != 0) {
-        dialog.value.message = "Извините, но вы не можете удалить товар, который есть в наличии или ранее использовался в операциях!";
+        dialog.value.message =
+          "Извините, но вы не можете удалить товар, который есть в наличии или ранее использовался в операциях!";
         dialog.value.type = "error";
         dialog.value.isDialogShown = true;
         dialog.value.dialogFunc = () => {};
@@ -93,7 +103,7 @@ export default {
       }
     }
     function saveChanges() {
-      let requiers = ["code", "name", "unit", "price","nds"];
+      let requiers = ["code", "name", "unit", "price", "nds"];
       error.value.isActive = false;
       error.value.messages = [];
 
@@ -112,12 +122,21 @@ export default {
         let prod = {};
         Object.assign(prod, product.value);
         ipcRenderer.send("edit-product", prod);
-        router.push('/store');
+        router.push("/store");
       }
     }
-    return { product, items, saveChanges, error, dialog, delProduct,totalAmount  };
+    return {
+      product,
+      items,
+      saveChanges,
+      error,
+      dialog,
+      delProduct,
+      totalAmount,
+      salesHistory,
+    };
   },
-  components: { TheProductForm, AmountByPriceChart, Dialog },
+  components: { TheProductForm, AmountByPriceChart, Dialog, PriceHistoryByProductVue },
 };
 </script>
 
@@ -140,7 +159,7 @@ export default {
 .chart-amountbyprice {
   height: 300px;
 }
-.amount{
+.amount {
   width: 100%;
   text-align: right;
   font-weight: 400;

@@ -80,7 +80,7 @@
                 </p>
               </div>
               <p class="list-item-text">
-                Всего: <b>&#8381;{{ item.sum }}</b>
+                Всего: <b>&#8381;{{ item.sum }} Наценка: {{getMarkup(item.sumCost, item.sum)}}%</b>
               </p>
               <button class="list-item-del" @click="delElement(item)">
                 &#10006;
@@ -146,6 +146,10 @@ export default {
     function selectAgent(agent) {
       selectedAgent = agent;
     }
+    function getMarkup(cost, price){
+      let prof = price - cost;
+      return ((prof / cost) * 100).toFixed(2);
+    }
     function addProduct(value) {
       let duplicates = products.value.filter(
         (item) =>
@@ -157,7 +161,6 @@ export default {
             item.entity != value.entity && item.product.id != value.product.id
         );
       }
-      console.log(value);
       products.value.push(value);
       isProductAddWin.value = false;
     }
@@ -182,7 +185,6 @@ export default {
         error.value.isActive = true;
       } else {
         let productsToSend = products.value.map((item) => {
-          console.log(item);
           return {
             id: item.entity,
             amount: item.amount,
@@ -197,10 +199,9 @@ export default {
           comment: comment.value,
           products: productsToSend,
         };
-        console.log(sale);
         ipcRenderer.send("add-sale", sale);
         ipcRenderer.on("succes-sale", () => {
-          router.go(-1);
+          router.push('Balance');
         });
       }
     }
@@ -235,6 +236,7 @@ export default {
       contract,
       payday,
       isNotPayday,
+      getMarkup
     };
   },
   components: { SelectBox, SelectProductSale },

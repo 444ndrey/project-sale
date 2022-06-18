@@ -30,7 +30,7 @@
 <script>
 import { ref } from "@vue/reactivity";
 import TheOperationsHistory from "../components/TheOperationsHistory.vue";
-import { computed, onMounted } from "@vue/runtime-core";
+import { computed, onMounted, onBeforeMount } from "@vue/runtime-core";
 import { ipcRenderer } from "electron";
 import SelectBox from "../components/uiControls/SelectBox.vue";
 export default {
@@ -41,7 +41,7 @@ export default {
     let agents = ref([]);
     let sorting = ref({
       isFirstLast: false,
-      isExpensiveFirst: false
+      isExpensiveFirst: false,
     });
     const operations = ref([]);
     let searchValue = ref("");
@@ -84,16 +84,15 @@ export default {
           let sum = 0;
           let type = item.type;
           item.products.forEach((item) => {
-            if(type == 'buy'){
+            if (type == "buy") {
               sum += item.cost * item.amount;
-            }else{
-               sum += item.price * item.amount;
+            } else {
+              sum += item.price * item.amount;
             }
           });
           item.sum = sum;
         });
-      }, 100);
-      console.log(operations.value)
+      }, 50);
       sortByDate();
     }
     function sortByDate() {
@@ -112,17 +111,17 @@ export default {
         });
       }
     }
-    function sortBySum(){
-      if(sorting.value.isExpensiveFirst){
-        operations.value.sort((a,b) => a.sum - b.sum);
-      }else{
-        operations.value.sort((a,b) => b.sum - a.sum);
+    function sortBySum() {
+      if (sorting.value.isExpensiveFirst) {
+        operations.value.sort((a, b) => a.sum - b.sum);
+      } else {
+        operations.value.sort((a, b) => b.sum - a.sum);
       }
       sorting.value.isExpensiveFirst = !sorting.value.isExpensiveFirst;
     }
-    onMounted(() => {
-      ipcRenderer.send("get-all-agents");
-      ipcRenderer.on("send-all-agents", (e, data) => {
+    onBeforeMount( () => {
+       ipcRenderer.send("get-all-agents");
+       ipcRenderer.on("send-all-agents", (e, data) => {
         agents.value = data;
         return ipcRenderer
           .invoke("get-all-sales")

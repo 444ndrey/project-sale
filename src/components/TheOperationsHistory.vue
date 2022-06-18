@@ -6,7 +6,7 @@
       <th class="table-header sortable" @click="$emit('sort-sum')">Сумма</th>
       <th class="table-header sortable" @click="$emit('sort-date')">Дата</th>
       <th class="table-header">Подробнее</th>
-      <tr class="table-row" v-for="item in ops" :key="item.id">
+      <tr class="table-row" v-for="item in ops" :key="item.code">
         <td class="table-value">
           <div class="table-type table-type-buy" v-if="item.type == 'sale'">
             Продажа
@@ -42,7 +42,8 @@ export default {
     const ops = computed(() => {
       return props.operations.map((item,index) => {
         return {
-          id: index,
+          code: index,
+          id: item.id,
           agent: props.agents.find((a) => a.id == item.agent),
           date: item.date,
           type: item.type,

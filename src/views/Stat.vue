@@ -144,10 +144,10 @@ export default {
           });
         }
         else{
-          let a = arr.filter(a => a.date.getMonth() == date.getMonth() && a.year == date.getFullYear())[0].cost;
-          arr.filter(a => a.date.getMonth() == date.getMonth() && a.year == date.getFullYear())[0].cost += a;
+          arr.filter(a => a.date.getMonth() == date.getMonth() && a.year == date.getFullYear())[0].cost += (item.cost * item.amount);
         }
       });
+      console.log(arr);
       arr.forEach(item => {
         let income = 0;
         sales.forEach(sale => {
@@ -163,7 +163,6 @@ export default {
     onMounted(() => {
       ipcRenderer.invoke("get-all-sales-v2").then((res) => {
         sales = res;
-        console.log(sales[0]);
         totalIncome.value = getIncome();
       });
       ipcRenderer.invoke("get-all-purchase-v2").then((res) => {

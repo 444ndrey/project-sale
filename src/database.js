@@ -201,7 +201,7 @@ exports.setOrgInfo = data => {
             knex.select().from('Org').first().update(data).then(res => res);
         }
     })
-}//ПЕРЕПУТАЛ КОЛ-ВО ПОПРАВЬ
+}
 exports.getAllSalesV2 = () => {
     return knex('Sale').join('SaleEntity','Sale.id', '=', 'SaleEntity.sale')
     .select(['Sale.*','Product.*','SaleEntity.*','Entity.amount as amount_in_storage','Entity.cost as product_cost','Product.id as info_id'])

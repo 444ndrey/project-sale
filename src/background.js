@@ -1,26 +1,40 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain, dialog } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
-import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
+// import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
+import bridge from './bridge.js'
 const isDevelopment = process.env.NODE_ENV !== 'production'
+const path = require('path');
+const puppeteer = require('puppeteer');
+const fs = require('fs-extra');
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
-  { scheme: 'app', privileges: { secure: true, standard: true } }
+  {
+    scheme: 'app', privileges: {
+      secure: true, titleBarStyle: 'hidden',
+      titleBarOverlay: true
+    }
+  }
 ])
 
 async function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
+    icon: './icon.ico',
     width: 1280,
-    height: 720,
+    height: 900,
+    frame: false,
+    minWidth: 1000,
+    minHeight: 650,
     webPreferences: {
-      
+
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
-      contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION
+      nodeIntegration: true,
+      contextIsolation: false,
+      spellcheck: false
     }
   })
 
@@ -72,3 +86,55 @@ if (isDevelopment) {
     })
   }
 }
+ipcMain.on('save-bill', async (e, html) => {
+  try {
+    let win = new BrowserWindow({ title: 'Счет', show: false });
+    win.loadURL(`data:text/html;charset=utf-8,<body>${html}</body>`).then(() => {
+      dialog.showSaveDialog({
+        title: 'Сохранение Счета',
+        filters: [
+          { name: 'PDF', extensions: ['pdf'] }
+        ],
+        defaultPath: 'Счет.pdf',
+        properties: ['openFile', 'openDirectory']
+      }).then(async path => {
+        if (!path.canceled) {
+          let options = {
+            marginsType: 0,
+            pageSize: 'A4',
+            printBackground: true,
+            printSelectionOnly: false,
+            landscape: false,
+          }
+          win.webContents.printToPDF(options).then(data => {
+            fs.writeFile(path.filePath, data, function (err) { });
+          }).then(res => {
+            win.destroy();
+          }).catch(error => {
+            console.log(error)
+          })
+        }
+      });
+    })
+  } catch (e) {
+    console.log('IT IS OVER', e)
+  }
+});
+
+//menu window event listeners 
+ipcMain.on('close-btn', (e, data) => {
+  app.exit();
+});
+ipcMain.on('minimize-btn', (e,data) => {
+    let win = BrowserWindow.getFocusedWindow();
+    win.minimize();
+});
+ipcMain.on('resize-btn', (e,data) => {
+  let win = BrowserWindow.getFocusedWindow();
+  win.isMaximized() ? win.unmaximize() : win.maximize();
+})
+
+
+
+
+bridge.listen();

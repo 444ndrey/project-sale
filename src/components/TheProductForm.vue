@@ -1,0 +1,160 @@
+<template>
+  <div class="field__items">
+    <div class="filed__item">
+      <p class="field__item-label field__item-necessary">Название:</p>
+      <div>
+        <input
+          type="text"
+          class="control-input"
+          maxlength="50"
+          placeholder="Название"
+          v-model="product.name"
+        />
+      </div>
+    </div>
+    <div class="filed__item">
+      <p class="field__item-label field__item-necessary">Артикул:</p>
+      <div>
+        <input
+          type="text"
+          class="control-input"
+          maxlength="30"
+          placeholder="Артикул"
+          v-model="product.code"
+        />
+      </div>
+    </div>
+    <div class="filed__item">
+      <p class="field__item-label field__item-necessary">Ед.измерения:</p>
+      <div>
+        <input
+          type="text"
+          class="control-input"
+          maxlength="4"
+          placeholder="Ед.измерения"
+          v-model="product.unit"
+          @keypress="fixUnit($event)"
+        />
+      </div>
+    </div>
+    <div class="filed__item">
+      <p class="field__item-label field__item-necessary">Цена за единицу:</p>
+      <InputPrice v-model:inputValue="product.price"></InputPrice>
+    </div>
+    <div class="filed__item filed__item-short">
+      <p class="field__item-label field__item-necessary">НДС:</p>
+      <div class="filed__item-input">
+        <input
+          type="number"
+          v-model="product.nds"
+          @focusout="fixNds"
+          @keypress="fixNdsLength"
+          class="control-input"
+        />
+      </div>
+    </div>
+    <div class="filed__item"></div>
+  </div>
+  <!-- <div class="params">
+    <p class="field__item-label">Дополнительные параметры:</p>
+    <div class="params__table">
+      <h4 class="title2">Извините, но доп.парметры пока недоступны.</h4>
+    </div>
+  </div> -->
+</template>
+
+<script>
+import InputPrice from "./uiControls/InputPrice.vue";
+export default {
+  props: ["product"],
+  setup(props) {
+    function fixUnit(e) {
+      let char = String.fromCharCode(e.keyCode); // Get the character
+      if (/^[А-Яа-яA-Za-z]+$/.test(char)) return true;
+      // Match with regex
+      else e.preventDefault(); // If not match, don't add to input text
+    }
+    function fixNdsLength(e) {
+      if (e.target.value.toString().length >= 3) {
+        e.preventDefault();
+      }
+    }
+    function fixNds(e) {
+      if (e.target.value > 100) {
+        e.target.value = 100;
+        props.product.nds = 100;
+      }
+    }
+    return { fixNdsLength, fixNds, fixUnit };
+  },
+  components: { InputPrice },
+};
+</script>
+
+<style scoped>
+.field__items {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  margin-bottom: 30px;
+  margin-top: 10px;
+}
+.field__item-label {
+  margin: 5px;
+  color: var(--gray-main);
+  user-select: none;
+}
+.field__item-necessary::after {
+  content: "*";
+  color: #f79114;
+  display: inline;
+}
+.params__table {
+  width: 100%;
+  border: 1px solid #ccccccee;
+  border-radius: 5px;
+  height: 50px;
+  background-color: #eeee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.buttons-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  align-self: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+  bottom: 0;
+}
+.price {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.price-input {
+  padding-left: 20px;
+}
+.price span {
+  position: absolute;
+  margin-left: 5px;
+  color: var(--gray-main);
+  font-size: 20px;
+  padding-bottom: 3px;
+  user-select: none;
+}
+.params {
+  margin-bottom: 30px;
+}
+.filed__item-short {
+  max-width: 150px;
+}
+.filed__item-input {
+  display: flex;
+}
+.filed__item-input::after {
+  content: "%";
+  color: var(--gray-main);
+  font-size: 20px;
+}
+</style>

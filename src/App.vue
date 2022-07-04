@@ -3,23 +3,7 @@
     <div class="header">
       <div class="container">
         <nav class="navbar">
-          <router-link to="/sale"
-            ><svg
-              width="39"
-              height="39"
-              viewBox="0 0 39 39"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              class="navbar-icon"
-            >
-              <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M0.702686 17.5032C0.252754 17.9533 0 18.5636 0 19.2C0 19.8364 0.252754 20.4467 0.702686 20.8968L17.5027 37.6968C17.9528 38.1467 18.5631 38.3995 19.1995 38.3995C19.8359 38.3995 20.4462 38.1467 20.8963 37.6968L37.6963 20.8968C37.9195 20.6742 38.0965 20.4097 38.2172 20.1186C38.3379 19.8274 38.3998 19.5152 38.3995 19.2V7.2C38.3995 5.29044 37.6409 3.45909 36.2907 2.10883C34.9404 0.758569 33.109 0 31.1995 0H19.1995C18.5851 0 17.9707 0.2352 17.5027 0.7032L0.702686 17.5032ZM31.1995 9.6C30.563 9.6 29.9525 9.34714 29.5024 8.89706C29.0523 8.44697 28.7995 7.83652 28.7995 7.2C28.7995 6.56348 29.0523 5.95303 29.5024 5.50294C29.9525 5.05286 30.563 4.8 31.1995 4.8C31.836 4.8 32.4465 5.05286 32.8965 5.50294C33.3466 5.95303 33.5995 6.56348 33.5995 7.2C33.5995 7.83652 33.3466 8.44697 32.8965 8.89706C32.4465 9.34714 31.836 9.6 31.1995 9.6Z"
-                fill="#969696"
-              /></svg
-          ></router-link>
-          <router-link to="/balance"
+          <router-link class="nodrag" to="/balance"
             ><svg
               width="40"
               height="30"
@@ -35,7 +19,7 @@
                 fill="#969696"
               /></svg
           ></router-link>
-          <router-link to="/store"
+          <router-link class="nodrag" to="/store"
             ><svg
               width="34"
               height="40"
@@ -49,7 +33,7 @@
                 fill="#969696"
               /></svg
           ></router-link>
-          <router-link to="/agents"
+          <router-link class="nodrag" to="/agents"
             ><svg
               width="48"
               height="48"
@@ -63,7 +47,7 @@
                 fill="#969696"
               /></svg
           ></router-link>
-          <router-link to="/stat"
+          <router-link class="nodrag" to="/stat"
             ><svg
               width="40"
               height="34"
@@ -77,36 +61,83 @@
                 fill="#969696"
               /></svg
           ></router-link>
+          <router-link class="nodrag" to="/settings">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="navbar-icon"
+              viewBox="0 0 20 20"
+              fill="#969696"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </router-link>
+          <!-- <img class="logo" src="./assets/icons/logo.svg" draggable="false" /> -->
+          <p class="title2 last-child">В разработке</p>
+          <div class="win-btns nodrag">
+            <button class="win-btn nodrag" @click="minimazeWin">&#8722;</button>
+            <button class="win-btn nodrag" @click="resizeWin">&#128471;&#xFE0E;</button>
+            <button class="win-btn nodrag" @click="closeWin">&#128473;&#xFE0E;</button>
+          </div>
         </nav>
       </div>
     </div>
-    <router-view></router-view>
+    <router-view class="view"></router-view>
   </div>
 </template>
 
 <script>
+import { ipcRenderer } from 'electron';
 export default {
   setup() {
-    
+    function closeWin(){
+      console.log(5+5);
+      ipcRenderer.send('close-btn', true)
+    }
+    function resizeWin(){
+      ipcRenderer.send('resize-btn', true);
+    }
+    function minimazeWin(){
+       ipcRenderer.send('minimize-btn', true);
+    }
+    return {
+      closeWin, resizeWin, minimazeWin
+    }
   },
-}
+};
 </script>
 
 <style>
+.logo {
+  height: 35px;
+  margin-left: auto;
+}
 .header {
   width: 100%;
   background-color: #fff;
   -webkit-box-shadow: 0px 12px 13px -9px rgba(34, 60, 80, 0.2);
   -moz-box-shadow: 0px 12px 13px -9px rgba(34, 60, 80, 0.2);
   box-shadow: 0px 12px 13px -9px rgba(34, 60, 80, 0.2);
-  margin-bottom: 40px;
+  border-bottom: 1px solid rgba(202, 202, 202, 0.933);
+  position: fixed;
+  top: 0;
+  -webkit-app-region: drag;
+}
+.drag{
+  -webkit-app-region: drag;
+}
+.nodrag{
+   -webkit-app-region: no-drag;
 }
 .navbar {
   display: flex;
   justify-content: flex-start;
   gap: 100px;
   align-items: center;
-  height: 50px;
+  height: 45px;
 }
 .navbar-icon {
   width: 25px;
@@ -118,17 +149,57 @@ export default {
 .navbar-icon:hover path {
   fill: var(--gray-secound);
 }
-.router-link-active > .navbar-icon path{
+.router-link-active > .navbar-icon path {
   fill: var(--red);
 }
-
-@media screen and (max-width: 750px){
-
-    .navbar{
-        gap: 50px;
-    }
+.router-link-active > .navbar-icon {
+  -webkit-filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
+  transform: scale(1.1);
 }
-
-
-
+.view {
+  height: 100%;
+  padding-top: 85px;
+  padding-bottom: 30px;
+  overflow: hidden;
+}
+.win {
+  height: 100%;
+}
+.last-child{
+  color: #b9b9b9ee;
+  position: absolute;
+  right: 0px;
+  margin-top: 100px;
+  padding: 10px;
+}
+.win-btns{
+  display: flex;
+  gap:5px;
+  align-items: center;
+   position: absolute;
+  right: 0px;
+  top: 0px;
+  padding: 10px 10px;
+  height: 100%;
+}
+.win-btn{
+  background-color: transparent;
+  border:none;
+  padding: 0 10px;
+  text-align: center;
+  font-weight: bold;
+  color: var(--gray-main);
+  cursor: pointer;
+  transition: .3s ease-in-out;
+} 
+.win-btn:hover{
+  background-color: #eeee;
+  color: var(--gray-secound);
+}
+@media screen and (max-width: 750px) {
+  .navbar {
+    gap: 50px;
+  }
+}
 </style>
